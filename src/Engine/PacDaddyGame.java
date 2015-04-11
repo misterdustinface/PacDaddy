@@ -18,7 +18,7 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 		attributes = new Table<Object>();
 		attributes.insert("SCORE", 0);
 		attributes.insert("LIVES", 3);
-		attributes.insert("GAMESPEED__UPS", 4);
+		attributes.insert("GAMESPEED__UPS", 15);
 		
 		inputFunctions = new Table<VoidFunctionPointer>();
 		inputFunctions.insert("UP", new VoidFunctionPointer() {

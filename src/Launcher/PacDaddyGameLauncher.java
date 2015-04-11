@@ -2,9 +2,9 @@ package Launcher;
 
 import java.util.Arrays;
 
-import functionpointers.VoidFunctionPointer;
-import base.TickingLoop;
 import Engine.PacDaddyGame;
+import base.TickingLoop;
+import functionpointers.VoidFunctionPointer;
 
 public class PacDaddyGameLauncher {
 	public static void main(String[] args) {
@@ -24,7 +24,7 @@ public class PacDaddyGameLauncher {
 		});
 		
 		final TickingLoop testInput = new TickingLoop();
-		testInput.setUpdatesPerSecond(1);
+		testInput.setUpdatesPerSecond((Integer)game.getValueOf("GAMESPEED__UPS") / 4);
 		testInput.addFunction(new VoidFunctionPointer() {
 			String previous = "UP";
 			
@@ -43,7 +43,7 @@ public class PacDaddyGameLauncher {
 				game.sendCommand(previous);
 			}
 		});
-		
+
 		game.addComponent("TESTDISPLAY", testDisplayer);
 		game.addComponent("TESTINPUT", testInput);
 		game.start();
