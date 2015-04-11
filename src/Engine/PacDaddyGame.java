@@ -7,7 +7,7 @@ import base.Application;
 
 public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddyBoardReader, PadDaddyAttributeReader {
 	
-	final private static String[] ATTRIBUTES = {"SCORE", "LIVES", "UPDATES PER SECOND"};
+	final private static String[] ATTRIBUTES = {"SCORE", "LIVES", "GAMESPEED__UPS"};
 	final private static String[] INPUT_COMMANDS = {"UP", "DOWN", "LEFT", "RIGHT", "PLAY", "PAUSE", "GAMESPEED++", "GAMESPEED--"};
 	
 	final private PacDaddyMainLoop mainLoop;
@@ -18,7 +18,7 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 		attributes = new Table<Object>();
 		attributes.insert("SCORE", 0);
 		attributes.insert("LIVES", 3);
-		attributes.insert("UPDATES PER SECOND", 2);
+		attributes.insert("GAMESPEED__UPS", 4);
 		
 		inputFunctions = new Table<VoidFunctionPointer>();
 		inputFunctions.insert("UP", new VoidFunctionPointer() {
@@ -43,7 +43,7 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 		});
 		inputFunctions.insert("PLAY", new VoidFunctionPointer() {
 			public void call() {
-				mainLoop.setUpdatesPerSecond((Integer)getValueOf("UPDATES PER SECOND"));
+				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
 			}
 		});
 		inputFunctions.insert("PAUSE", new VoidFunctionPointer() {
@@ -53,20 +53,28 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 		});
 		inputFunctions.insert("GAMESPEED++", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("UPDATES PER SECOND", (Integer)attributes.get("UPDATES PER SECOND") + 10);
-				mainLoop.setUpdatesPerSecond((Integer)getValueOf("UPDATES PER SECOND"));
+				shiftGameSpeed__ups(+10);
+				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
 			}
 		});
 		inputFunctions.insert("GAMESPEED--", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("UPDATES PER SECOND", (Integer)attributes.get("UPDATES PER SECOND") - 10);
-				mainLoop.setUpdatesPerSecond((Integer)getValueOf("UPDATES PER SECOND"));
+				shiftGameSpeed__ups(-10);
+				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
 			}
 		});
 		
 		mainLoop = new PacDaddyMainLoop();
-		mainLoop.setUpdatesPerSecond((Integer)getValueOf("UPDATES PER SECOND"));
+		mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
 		setMain(mainLoop);
+	}
+	
+	private void shiftGameSpeed__ups(int shiftamount__ups) {
+		attributes.insert("GAMESPEED__UPS", getGameSpeed__ups() + shiftamount__ups);
+	}
+	
+	private int getGameSpeed__ups() {
+		return (Integer)getValueOf("GAMESPEED__UPS");
 	}
 
 	public void sendCommand(String command) {

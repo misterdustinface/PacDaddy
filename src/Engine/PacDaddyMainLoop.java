@@ -47,7 +47,7 @@ public class PacDaddyMainLoop extends TickingLoop implements PacDaddyInput, PacD
 	}
 	
 	private boolean isWall(int row, int col) {
-		return wallworld[row][col] == 1;
+		return row < 0 || col < 0 || row >= ROWS || col >= COLS || wallworld[row][col] == 1;
 	}
 	
 	private Actor newActor() {
@@ -108,12 +108,17 @@ public class PacDaddyMainLoop extends TickingLoop implements PacDaddyInput, PacD
 		enemies.add(newEnemy);
 	}
 	
+	private int[][] getWallWorldCopy() {
+		int[][] wallWorldCopy = new int[ROWS][];
+		for (int row = 0; row < ROWS; row++) {
+			wallWorldCopy[row] = Arrays.copyOf(wallworld[row], wallworld[row].length);
+		}
+		return wallWorldCopy;
+	}
+	
 	final public int[][] getTiledBoard() {
 		
-		final int[][] worldRepresentation = new int[ROWS][];
-		for (int row = 0; row < ROWS; row++) {
-			worldRepresentation[row] = Arrays.copyOf(wallworld[row], wallworld[row].length);
-		}
+		int[][] worldRepresentation = getWallWorldCopy();
 		
 		TileCoordinate actorCoordinate = actorPositions.get(pacman);
 		worldRepresentation[actorCoordinate.row][actorCoordinate.col] = 3;
