@@ -7,7 +7,7 @@ import base.Application;
 
 public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddyBoardReader, PadDaddyAttributeReader {
 	
-	final private static String[] ATTRIBUTES = {"SCORE", "LIVES", "GAMESPEED__UPS"};
+	final private static String[] ATTRIBUTES = {"SCORE", "LIVES", "GAMESPEED__UPS", "IS_PAUSED"};
 	final private static String[] INPUT_COMMANDS = {"UP", "DOWN", "LEFT", "RIGHT", "PLAY", "PAUSE", "GAMESPEED++", "GAMESPEED--"};
 	
 	final private PacDaddyMainLoop mainLoop;
@@ -19,6 +19,7 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 		attributes.insert("SCORE", 0);
 		attributes.insert("LIVES", 3);
 		attributes.insert("GAMESPEED__UPS", 15);
+		attributes.insert("IS_PAUSED", false);
 		
 		inputFunctions = new Table<VoidFunctionPointer>();
 		inputFunctions.insert("UP", new VoidFunctionPointer() {
@@ -43,11 +44,13 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 		});
 		inputFunctions.insert("PLAY", new VoidFunctionPointer() {
 			public void call() {
+				attributes.insert("IS_PAUSED", false);
 				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
 			}
 		});
 		inputFunctions.insert("PAUSE", new VoidFunctionPointer() {
 			public void call() {
+				attributes.insert("IS_PAUSED", true);
 				mainLoop.setUpdatesPerSecond(0);
 			}
 		});

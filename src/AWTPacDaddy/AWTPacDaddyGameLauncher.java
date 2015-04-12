@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,10 +13,19 @@ import functionpointers.VoidFunctionPointer;
 import Engine.PacDaddyGame;
 
 public class AWTPacDaddyGameLauncher {
+	
+	final static PacDaddyGame game = new PacDaddyGame();
+	final static Color[] colors = new Color[] {
+		Color.BLACK, Color.WHITE, Color.BLUE, Color.YELLOW, Color.ORANGE, Color.RED, Color.PINK
+	};
+	
+	final static int SCREEN_WIDTH = 400;
+	final static int SCREEN_HEIGHT = 400;
+	
 	public static void main(String[] args) {
-		final PacDaddyGame game = new PacDaddyGame();
+
 		final JFrame frame = new JFrame();
-		frame.setSize(400, 400);
+		frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		frame.setTitle("Pac Daddy");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -35,7 +43,11 @@ public class AWTPacDaddyGameLauncher {
 					break;
 				case 'd':	game.sendCommand("RIGHT");
 					break;
-				case 'p':	//game.sendCommand(command);
+				case 'p':	if ((boolean)game.getValueOf("IS_PAUSED")) {
+								game.sendCommand("PLAY");
+							} else {
+								game.sendCommand("PAUSE");
+							}
 					break;
 				}
 			}
@@ -54,27 +66,20 @@ public class AWTPacDaddyGameLauncher {
 		frame.addKeyListener(keylistener);
 		frame.add(panel);
 		
-		final int WIDTH = 400;
-		final int HEIGHT = 400;
-		
 		final TickingLoop testDrawer = new TickingLoop();
 		testDrawer.setUpdatesPerSecond(20);
 		testDrawer.addFunction(new VoidFunctionPointer() {
 			public void call() {
 				
 				final int[][] board = game.getTiledBoard();
+				int TILEWIDTH = panel.getWidth()/board[0].length;
+				int TILEHEIGHT = panel.getHeight()/board.length;
 				Graphics2D g = (Graphics2D)panel.getGraphics();
-				g.setColor(Color.BLACK);
-				g.fillRect(0, 0, WIDTH, HEIGHT);
 
 				for (int row = 0; row < board.length; row++) {
 					for (int col = 0; col < board[row].length; col++) {
-						int TILEWIDTH = WIDTH/board[row].length;
-						int TILEHEIGHT = HEIGHT/board.length;
-						if (board[row][col] == 3) {
-							g.setColor(Color.YELLOW);
-							g.fillRect(col * TILEWIDTH, row * TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
-						}
+						g.setColor(getTileColor(board[row][col]));
+						g.fillRect(col * TILEWIDTH, row * TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
 					}
 				}
 				
@@ -85,4 +90,7 @@ public class AWTPacDaddyGameLauncher {
 		game.start();
 	}
 	
+	private static Color getTileColor(int tileNum) {
+		return colors[tileNum];
+	}
 }

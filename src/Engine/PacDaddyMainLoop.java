@@ -27,6 +27,10 @@ public class PacDaddyMainLoop extends TickingLoop implements PacDaddyInput, PacD
 		ROWS = 10; 
 		COLS = 10;
 		wallworld = new int[ROWS][COLS];
+//		wallworld[5][5] = 1;
+//		wallworld[4][5] = 1;
+//		wallworld[5][4] = 1;
+//		wallworld[4][4] = 1;
 		actorPositions = new HashMap<Actor, TileCoordinate>();
 		pacman = newActor();
 		enemies = new ArrayList<Actor>();
