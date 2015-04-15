@@ -7,8 +7,8 @@ import base.Application;
 
 public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddyBoardReader, PadDaddyAttributeReader {
 	
-	final private static String[] ATTRIBUTES = {"SCORE", "LIVES", "GAMESPEED__UPS", "IS_PAUSED"};
-	final private static String[] INPUT_COMMANDS = {"UP", "DOWN", "LEFT", "RIGHT", "PLAY", "PAUSE", "GAMESPEED++", "GAMESPEED--"};
+	//final private static String[] ATTRIBUTES = {"SCORE", "LIVES", "GAMESPEED__UPS", "IS_PAUSED"};
+	//final private static String[] INPUT_COMMANDS = {"UP", "DOWN", "LEFT", "RIGHT", "PLAY", "PAUSE", "GAMESPEED++", "GAMESPEED--"};
 	
 	final private PacDaddyMainLoop mainLoop;
 	final private Table<Object> attributes;
@@ -95,9 +95,13 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 	final public int[][] getTiledBoard() {
 		return mainLoop.getTiledBoard();
 	}
+	
+	public PadDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
+		return mainLoop.getAttributeReaderAtTile(row, col);
+	}
 
 	public String[] getAttributes() {
-		return ATTRIBUTES;
+		return (String[]) attributes.getNames().toArray();
 	}
 	
 	public String[] getTileNames() {
@@ -105,7 +109,7 @@ public class PacDaddyGame extends Application implements PacDaddyInput, PacDaddy
 	}
 	
 	public String[] getCommands() {
-		return INPUT_COMMANDS;
+		return (String[]) inputFunctions.getNames().toArray();
 	}
 	
 }
