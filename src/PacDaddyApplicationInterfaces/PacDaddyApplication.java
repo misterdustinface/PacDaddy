@@ -2,6 +2,6 @@ package PacDaddyApplicationInterfaces;
 
 public interface PacDaddyApplication {
 	PacDaddyBoardReader 	getBoardReader();
-	PadDaddyAttributeReader getGameAttributeReader();
+	PacDaddyAttributeReader getGameAttributeReader();
 	PacDaddyInput			getInputProcessor();
 }

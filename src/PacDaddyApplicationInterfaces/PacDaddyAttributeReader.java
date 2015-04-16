@@ -1,6 +1,6 @@
 package PacDaddyApplicationInterfaces;
 
-public interface PadDaddyAttributeReader {
+public interface PacDaddyAttributeReader {
 	Object getValueOf(String attributeName);
 	String[] getAttributes();
 }
