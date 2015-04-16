@@ -1,26 +1,30 @@
 package Engine;
 
-import datastructures.Table;
+import InternalInterfaces.AttributeSetter;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import functionpointers.VoidFunctionPointer;
 
-public class Pactor extends Actor implements PacDaddyAttributeReader {
+public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeSetter {
 
-	final private Table<Object> attributes;
+	final private GameAttributes attributes;
 	final private TileCoordinate position;
 	
 	Pactor() {
-		attributes = new Table<Object>();
+		attributes = new GameAttributes();
 		position = new TileCoordinate();
 		learnBasics();
 	}
 	
+	public void setAttribute(String name, Object value) {
+		attributes.setAttribute(name, value);
+	}
+	
 	public Object getValueOf(String attributeName) {
-		return attributes.get(attributeName);
+		return attributes.getValueOf(attributeName);
 	}
 
 	public String[] getAttributes() {
-		return (String[]) attributes.getNames().toArray();
+		return attributes.getAttributes();
 	}
 	
 	public TileCoordinate getTileCoordinate() {
@@ -30,27 +34,27 @@ public class Pactor extends Actor implements PacDaddyAttributeReader {
 	private void learnBasics() {
 		learnAction("NONE", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("DIRECTION", "NONE");
+				setAttribute("DIRECTION", "NONE");
 			}
 		});
 		learnAction("UP", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("DIRECTION", "UP");
+				setAttribute("DIRECTION", "UP");
 			}
 		});
 		learnAction("DOWN", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("DIRECTION", "DOWN");
+				setAttribute("DIRECTION", "DOWN");
 			}
 		});
 		learnAction("RIGHT", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("DIRECTION", "RIGHT");
+				setAttribute("DIRECTION", "RIGHT");
 			}
 		});
 		learnAction("LEFT", new VoidFunctionPointer() {
 			public void call() {
-				attributes.insert("DIRECTION", "LEFT");
+				setAttribute("DIRECTION", "LEFT");
 			}
 		});
 		

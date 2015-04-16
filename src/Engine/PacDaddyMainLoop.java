@@ -1,10 +1,9 @@
 package Engine;
 
-import InternalInterfaces.PlayerController;
 import base.TickingLoop;
 import functionpointers.VoidFunctionPointer;
 
-public class PacDaddyMainLoop extends TickingLoop implements PlayerController {
+public class PacDaddyMainLoop extends TickingLoop {
 	
 	private PacDaddyWorld worldRef;
 	
@@ -13,6 +12,7 @@ public class PacDaddyMainLoop extends TickingLoop implements PlayerController {
 		addFunction(new VoidFunctionPointer() {
 			public void call() {
 				worldRef.tick();
+				
 //				for (Actor enemy : worldRef.enemies) {
 //					enemy.performAction("ATTACK_PLAYER");
 //				}
@@ -22,17 +22,5 @@ public class PacDaddyMainLoop extends TickingLoop implements PlayerController {
 	
 	final public void setWorld(PacDaddyWorld WORLDREF) {
 		worldRef = WORLDREF;
-	}
-	
-	final public void sendCommandToPlayer(String command) {
-		getPlayer().performAction(command);
-	}
-	
-	final public String[] getPlayerCommands() {
-		return (String[]) getPlayer().getActions().toArray(new String[]{});
-	}
-	
-	private Pactor getPlayer() {
-		return worldRef.getPactor("PLAYER");
 	}
 }

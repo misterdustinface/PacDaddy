@@ -1,9 +1,10 @@
 package Engine;
 
+import InternalInterfaces.AttributeSetter;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import datastructures.Table;
 
-public class GameAttributes implements PacDaddyAttributeReader {
+public class GameAttributes implements PacDaddyAttributeReader, AttributeSetter {
 	final private Table<Object> attributes;
 	
 	public GameAttributes() {
@@ -21,4 +22,5 @@ public class GameAttributes implements PacDaddyAttributeReader {
 	public String[] getAttributes() {
 		return (String[]) attributes.getNames().toArray(new String[]{});
 	}
+	
 }

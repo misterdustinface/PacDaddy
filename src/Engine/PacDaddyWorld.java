@@ -12,7 +12,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	private String[] tilenamesarray;
 	final private ArrayList<String> tilenames;	
 	final Table<Pactor> pactors;
-	private int ROWS, COLS;
 	private int[][] wallworld;
 	
 	public PacDaddyWorld() {
@@ -22,15 +21,18 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		addTileType("FLOOR");
 		addTileType("WALL");
 		addTileType("PLAYER");
+		
 		addPactor("PLAYER", new Pactor());
 		
-		loadFromString("111\n"
-					 + "101\n"
-					 + "111\n");
+		loadFromString("1111\n"
+					 + "1001\n"
+					 + "1001\n"
+					 + "1111\n");
 	}
 	
 //	public void newEnemy(String name) {
 //	Pactor newEnemy = new Pactor();
+//  newEnemy.setAttribute("IS_ENEMY", true);
 //	newEnemy.learnAction("ATTACK_PLAYER", new VoidFunctionPointer() {
 //		public void call() {
 //		}
@@ -39,24 +41,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 //}
 	
 	public void loadFromString(String worldstring) {
-		int numTiles = worldstring.length();
-		COLS = worldstring.indexOf('\n');
-		ROWS = numTiles / COLS;
-		
-		wallworld = new int[ROWS][COLS];
-		
-		char tilechar;
-		int strindex = 0;
-		
-		for (int row = 0; row < ROWS; row++) {
-			for (int col = 0; col < COLS; col++) {
-				do {
-					tilechar = worldstring.charAt(strindex++);
-				} while(!Character.isDigit(tilechar));
-				
-				wallworld[row][col] = Character.getNumericValue(tilechar);
-			}
-		}
+		wallworld = Utilities.StringToIntArray(worldstring);
 	}
 	
 	public void tick() {
@@ -94,8 +79,9 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		worldRepresentation[actorCoordinate.row][actorCoordinate.col] = tilenames.indexOf("PLAYER");
 		
 		for (String name : pactors.getNames()) {
-			if (name != "PLAYER") {
-				actorCoordinate = getPactor(name).getTileCoordinate();
+			Pactor p = pactors.get(name);
+			if (p.getValueOf("IS_ENEMY") != null) {
+				actorCoordinate = p.getTileCoordinate();
 				worldRepresentation[actorCoordinate.row][actorCoordinate.col] = tilenames.indexOf("ENEMY");
 			}
 		}
@@ -135,15 +121,23 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	private boolean isWall(int row, int col) {
-		return row < 0 || col < 0 || row >= ROWS || col >= COLS || wallworld[row][col] == 1;
+		return row < 0 || col < 0 || row >= getRows() || col >= getCols() || wallworld[row][col] == 1;
 	}
 	
 	private int[][] getWallWorldCopy() {
-		int[][] wallWorldCopy = new int[ROWS][];
-		for (int row = 0; row < ROWS; row++) {
-			wallWorldCopy[row] = Arrays.copyOf(wallworld[row], wallworld[row].length);
+		int[][] wallWorldCopy = new int[getRows()][];
+		for (int row = 0; row < getRows(); row++) {
+			wallWorldCopy[row] = Arrays.copyOf(wallworld[row], getCols());
 		}
 		return wallWorldCopy;
+	}
+	
+	private int getRows() {
+		return wallworld.length;
+	}
+	
+	private int getCols() {
+		return wallworld[0].length;
 	}
 	
 }

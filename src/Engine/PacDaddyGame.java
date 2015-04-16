@@ -1,6 +1,5 @@
 package Engine;
 
-import InternalInterfaces.PlayerController;
 import PacDaddyApplicationInterfaces.PacDaddyApplication;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyInput;
@@ -15,7 +14,7 @@ public class PacDaddyGame extends Application implements PacDaddyApplication {
 	final private FunctionDispatchCommandProcessor inputProcessor;
 	
 	final private PacDaddyMainLoop mainLoop;
-	final private PlayerController playerController;
+	final private PactorController playerController;
 	
 	public PacDaddyGame() {
 		
@@ -43,7 +42,9 @@ public class PacDaddyGame extends Application implements PacDaddyApplication {
 		world.getPactor("PLAYER").getTileCoordinate().row = 3;
 		world.getPactor("PLAYER").getTileCoordinate().col = 3;
 		
-		playerController = mainLoop;
+		playerController = new PactorController();
+		playerController.setPactor(world.getPactor("PLAYER"));
+		
 		inputProcessor = new FunctionDispatchCommandProcessor();
 		gameAttributes = new GameAttributes();
 		
@@ -54,22 +55,22 @@ public class PacDaddyGame extends Application implements PacDaddyApplication {
 		
 		inputProcessor.addCommand("UP", new VoidFunctionPointer() {
 			public void call() {
-				playerController.sendCommandToPlayer("UP");
+				playerController.sendCommandToPactor("UP");
 			}
 		});
 		inputProcessor.addCommand("DOWN", new VoidFunctionPointer() {
 			public void call() {
-				playerController.sendCommandToPlayer("DOWN");
+				playerController.sendCommandToPactor("DOWN");
 			}
 		});
 		inputProcessor.addCommand("LEFT", new VoidFunctionPointer() {
 			public void call() {
-				playerController.sendCommandToPlayer("LEFT");
+				playerController.sendCommandToPactor("LEFT");
 			}
 		});
 		inputProcessor.addCommand("RIGHT", new VoidFunctionPointer() {
 			public void call() {
-				playerController.sendCommandToPlayer("RIGHT");
+				playerController.sendCommandToPactor("RIGHT");
 			}
 		});
 		inputProcessor.addCommand("PLAY", new VoidFunctionPointer() {
