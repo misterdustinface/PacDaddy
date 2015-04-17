@@ -1,6 +1,6 @@
 local args = {...}
-local GAME_WRAPPER_FILE_PATH = args[1]
-local FEATURES_FOLDER = args[2]
+local GAME_WRAPPER_FILE_PATH    = args[1]
+local FEATURES_FOLDER_FILE_PATH = args[2]
 
 local function getAbsoluteFiles(pathname)
     local absfiles = {}
@@ -20,13 +20,13 @@ local function getAbsoluteFiles(pathname)
     return absfiles
 end
 
-local function loadFeatures(featuresFolder) 
+local function loadFeatures(featuresFolderFilePath) 
     local GAME = require(GAME_WRAPPER_FILE_PATH)
-    local files = getAbsoluteFiles(featuresFolder)
+    local files = getAbsoluteFiles(featuresFolderFilePath)
     for _, filename in ipairs(files) do
-        local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a chunk")
+        local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a lua chunk")
         chunk(GAME)
     end
 end
 
-loadFeatures(FEATURES_FOLDER)
+loadFeatures(FEATURES_FOLDER_FILE_PATH)
