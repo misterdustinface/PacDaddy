@@ -1,1 +1,0 @@
-return luajava.bindClass("java.lang.Thread")

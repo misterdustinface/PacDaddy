@@ -16,8 +16,7 @@ public class PacDaddyGame extends Application implements PacDaddyApplication {
 	final private PacDaddyMainLoop mainLoop;
 	final private PactorController playerController;
 	
-	public PacDaddyGame() {
-		
+	public PacDaddyGame() {		
 		mainLoop = new PacDaddyMainLoop();
 		world = new PacDaddyWorld();
 		mainLoop.setWorld(world);

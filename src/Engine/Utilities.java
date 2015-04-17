@@ -1,6 +1,10 @@
 package Engine;
 
-public class Utilities {
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.JsePlatform;
+
+final public class Utilities {
 	
 	public static int[][] StringToIntArray(String str) {
 		int numTiles = str.length();
@@ -27,6 +31,12 @@ public class Utilities {
 		}
 		
 		return ar;
+	}
+	
+	public static void runLuaScript(String script) {
+		Globals globals = JsePlatform.standardGlobals();
+		LuaValue chunk = globals.loadfile(script);
+		chunk.call( LuaValue.valueOf(script) );
 	}
 	
 }
