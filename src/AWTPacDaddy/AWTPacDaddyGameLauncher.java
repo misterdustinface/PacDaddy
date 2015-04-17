@@ -1,12 +1,12 @@
 package AWTPacDaddy;
 
-import Engine.FeatureLoader;
+import FeatureLoader.PacDaddyFeatureLoader;
 
 public class AWTPacDaddyGameLauncher {
 	
 	public static void main(String[] args) {
-		FeatureLoader.loadFeatures("features");
-		FeatureLoader.loadFeatures("AWTfeatures");
+		PacDaddyFeatureLoader.loadFeatures("features");
+		PacDaddyFeatureLoader.loadFeatures("AWTfeatures");
 	}
 
 }
