@@ -1,12 +1,12 @@
 package AWTPacDaddy;
 
-import Engine.Utilities;
+import Engine.FeatureLoader;
 
 public class AWTPacDaddyGameLauncher {
 	
 	public static void main(String[] args) {
-		Utilities.runLuaScript("luasrc/AWTPacDaddyGame.lua");
-		Utilities.runLuaScript("luasrc/SetGameFeatures.lua");
+		FeatureLoader.loadFeatures("features");
+		FeatureLoader.loadFeatures("AWTfeatures");
 	}
 
 }

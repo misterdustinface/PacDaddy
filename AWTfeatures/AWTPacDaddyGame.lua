@@ -1,12 +1,13 @@
+local args = {...}
+local GAME = args[1]
+
 require("luasrc/tif")
 require("luasrc/VoidFunctionPointer")
-
-local GAME = require("luasrc/PacDaddyGameWrapper")
 
 local Color = luajava.bindClass("java.awt.Color")
 local JFrame = luajava.bindClass("javax.swing.JFrame")
 local Graphics2D = luajava.bindClass("java.awt.Graphics2D")
-local KEYS = require("luasrc/AWTKeycodes")
+local KEYS = require("AWTfeatures/AWTKeycodes")
 
 local inputProcesses = {
     [KEYS.UP]    = function() GAME:sendCommand("UP")    end,
@@ -95,7 +96,7 @@ local function create()
     
     local keylistener = makeKeyInputProcessor()
     
-    local display = require("luasrc/AWTDisplay")
+    local display = require("AWTfeatures/AWTDisplay")
     display:init(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE)
     display:addKeyListener(keylistener);
     
