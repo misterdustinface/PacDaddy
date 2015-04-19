@@ -1,6 +1,6 @@
 local public = {}
 
-local game = require("luasrc/FeatureLoaderEngine/PacDaddyGameSingleton")
+local game = require("luasrc/PacDaddyGameWrapper/PacDaddyGameSingleton")
 
 local function addComponentToGame(this, name, implementation)
     game:addComponent(name, implementation)
@@ -42,10 +42,22 @@ local function getAttributeReaderAtTile(this, row, col)
     return this.boardReader:getAttributeReaderAtTile(row, col)
 end
 
+local function getSingleton(this)
+    return game
+end
+
 --local function setPlayerPosition(this, row, col)
 --    game.world:getPactor("PLAYER"):getTileCoordinate().row = row
 --    game.world:getPactor("PLAYER"):getTileCoordinate().col = col
 --end
+
+-- TODO grant write access to PacDaddyGame java
+-- TODO grant access to FunctionDispatchCommandProcessor java (in PacDaddyGame) [addCommand, sendCommand, getCommands]
+-- TODO grant access to GameAttributes java (in PacDaddyGame) [setAttribute, getValueOf, getAttributes]
+-- TODO grant access to PacDaddyMainLoop java (in PacDaddyGame) [addFunction]
+-- TODO grant access to PacDaddyWorld java (in PacDaddyGame) [addPactor, removePactor, getPactor, addTileType, loadFromString]
+-- TODO grant access to PactorController java (in PacDaddyGame) [setPactor, sendCommandToPactor, getPactorCommands]
+-- TODO grant access to Pactor java [performAction, learnAction, forgetAction, getActions, setAttribute, getValueOf, getAttributes, getTileCoordinate]
 
 public.boardReader     = game:getBoardReader()
 public.inputProcessor  = game:getInputProcessor()

@@ -1,4 +1,4 @@
-function newVoidFunctionPointer(callFunction)
+function VoidFunctionPointer(callFunction)
     return luajava.createProxy("functionpointers.VoidFunctionPointer", {
         call = callFunction,
     })
