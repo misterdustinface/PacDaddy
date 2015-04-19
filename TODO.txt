@@ -1,0 +1,21 @@
+FIND PLACE OF BEST FIT
+public void newEnemy(String name) {
+	Pactor enemy = new Pactor();
+    enemy.setAttribute("IS_ENEMY", true);
+	enemy.learnAction("ATTACK_PLAYER", new VoidFunctionPointer() {
+		public void call() {
+			// FILL
+		}
+	});
+	world.addPactor(name, enemy);
+}
+
+PACDADDYWORLD.JAVA LINE 49
+public PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
+	return pactors.get("PLAYER"); // TODO FIXME - make search algorithm to grab pactor at coordinate
+}
+
+FEATURELOADER.LUA LINE 5
+local function sortFilesByLoadPriority(filelist)
+    -- TODO SORT
+end

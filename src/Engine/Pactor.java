@@ -9,7 +9,7 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 	final private GameAttributes attributes;
 	final private TileCoordinate position;
 	
-	Pactor() {
+	public Pactor() {
 		attributes = new GameAttributes();
 		position = new TileCoordinate();
 		learnBasics();

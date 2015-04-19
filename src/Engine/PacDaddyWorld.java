@@ -18,27 +18,11 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		tilenames = new ArrayList<String>();
 		pactors = new Table<Pactor>();
 		
-		addTileType("FLOOR");
-		addTileType("WALL");
-		addTileType("PLAYER");
-		
-		addPactor("PLAYER", new Pactor());
-		
 		loadFromString("1111\n"
 					 + "1001\n"
 					 + "1001\n"
 					 + "1111\n");
 	}
-	
-//	public void newEnemy(String name) {
-//	Pactor newEnemy = new Pactor();
-//  newEnemy.setAttribute("IS_ENEMY", true);
-//	newEnemy.learnAction("ATTACK_PLAYER", new VoidFunctionPointer() {
-//		public void call() {
-//		}
-//	});
-//	addPactor(name, newEnemy);
-//}
 	
 	public void loadFromString(String worldstring) {
 		wallworld = Utilities.StringToIntArray(worldstring);

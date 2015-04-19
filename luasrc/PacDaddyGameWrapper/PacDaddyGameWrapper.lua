@@ -42,8 +42,28 @@ local function getAttributeReaderAtTile(this, row, col)
     return this.boardReader:getAttributeReaderAtTile(row, col)
 end
 
-local function getSingleton(this)
-    return game
+local function getModifiableWorld(this)
+    return game:getWritable("WORLD")
+end
+
+local function getModifiableAttributes(this)
+    return game:getWritable("ATTRIBUTES")
+end
+
+local function getModifiableInputProcessor(this)
+    return game:getWritable("INPUT_PROCESSOR")
+end
+
+local function getModifiableGameLoop(this)
+    return game:getWritable("MAINLOOP")
+end
+
+local function getModifiablePactorController(this)
+    return game:getWritable("PACTOR_CONTROLLER")
+end
+
+local function getModifiablePactor(this, name)
+    return this:getModifiableWorld():getPactor(name)
 end
 
 --local function setPlayerPosition(this, row, col)
@@ -51,26 +71,25 @@ end
 --    game.world:getPactor("PLAYER"):getTileCoordinate().col = col
 --end
 
--- TODO grant write access to PacDaddyGame java
--- TODO grant access to FunctionDispatchCommandProcessor java (in PacDaddyGame) [addCommand, sendCommand, getCommands]
--- TODO grant access to GameAttributes java (in PacDaddyGame) [setAttribute, getValueOf, getAttributes]
--- TODO grant access to PacDaddyMainLoop java (in PacDaddyGame) [addFunction]
--- TODO grant access to PacDaddyWorld java (in PacDaddyGame) [addPactor, removePactor, getPactor, addTileType, loadFromString]
--- TODO grant access to PactorController java (in PacDaddyGame) [setPactor, sendCommandToPactor, getPactorCommands]
--- TODO grant access to Pactor java [performAction, learnAction, forgetAction, getActions, setAttribute, getValueOf, getAttributes, getTileCoordinate]
+public.boardReader                   = game:getBoardReader()
+public.inputProcessor                = game:getInputProcessor()
+public.attributeReader               = game:getGameAttributeReader()
+public.addComponent                  = addComponentToGame
+public.start                         = startGame
+public.quit                          = quitGame
+public.sendCommand                   = sendCommand
+public.getCommands                   = getCommands
+public.getValueOf                    = getValueOf
+public.getAttributes                 = getAttributes
+public.getTiledBoard                 = getTiledBoard
+public.getTileNames                  = getTileNames
+public.getAttributeReaderAtTile      = getAttributeReaderAtTile
 
-public.boardReader     = game:getBoardReader()
-public.inputProcessor  = game:getInputProcessor()
-public.attributeReader = game:getGameAttributeReader()
-public.addComponent    = addComponentToGame
-public.start           = startGame
-public.quit            = quitGame
-public.sendCommand     = sendCommand
-public.getCommands     = getCommands
-public.getValueOf      = getValueOf
-public.getAttributes   = getAttributes
-public.getTiledBoard   = getTiledBoard
-public.getTileNames    = getTileNames
-public.getAttributeReaderAtTile = getAttributeReaderAtTile
+public.getModifiableWorld            = getModifiableWorld
+public.getModifiableAttributes       = getModifiableAttributes
+public.getModifiableInputProcessor   = getModifiableInputProcessor
+public.getModifiableGameLoop         = getModifiableGameLoop
+public.getModifiablePactorController = getModifiablePactorController
+public.getModifiablePactor           = getModifiablePactor
 
 return public

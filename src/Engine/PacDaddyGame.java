@@ -1,5 +1,6 @@
 package Engine;
 
+import InternalInterfaces.WriteAccessor;
 import PacDaddyApplicationInterfaces.PacDaddyApplication;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyInput;
@@ -7,7 +8,7 @@ import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import base.Application;
 import functionpointers.VoidFunctionPointer;
 
-public class PacDaddyGame extends Application implements PacDaddyApplication {
+public class PacDaddyGame extends Application implements PacDaddyApplication, WriteAccessor {
 	
 	final private PacDaddyWorld	world;
 	final private GameAttributes gameAttributes;
@@ -26,17 +27,19 @@ public class PacDaddyGame extends Application implements PacDaddyApplication {
 		world.addTileType("PLAYER");
 		world.addTileType("ENEMY");
 		
-		world.loadFromString("1111111111111\n"
-				           + "1000000000001"
-				           + "1000000000001"
-				           + "1000000000001"
-				           + "1000110110001"
-				           + "1000100010001"
-				           + "1000111110001"
-				           + "1000000000001"
-				           + "1000000000001"
-				           + "1000000000001"
-				           + "1111111111111\n");
+//		world.loadFromString("1111111111111\n"
+//				           + "1000000000001"
+//				           + "1000000000001"
+//				           + "1000000000001"
+//				           + "1000110110001"
+//				           + "1000100010001"
+//				           + "1000111110001"
+//				           + "1000000000001"
+//				           + "1000000000001"
+//				           + "1000000000001"
+//				           + "1111111111111\n");
+		
+		world.addPactor("PLAYER", new Pactor());
 		
 		world.getPactor("PLAYER").getTileCoordinate().row = 3;
 		world.getPactor("PLAYER").getTileCoordinate().col = 3;
@@ -121,4 +124,20 @@ public class PacDaddyGame extends Application implements PacDaddyApplication {
 		return (Integer)gameAttributes.getValueOf("GAMESPEED__UPS");
 	}
 	
+	final static String[] WRITABLES = new String[] {"WORLD", "ATTRIBUTES", "INPUT_PROCESSOR", "MAINLOOP", "PACTOR_CONTROLLER"};
+	
+	final public Object getWritable(String name) {
+		switch(name) {
+		case "WORLD":            	return world;
+		case "ATTRIBUTES":       	return gameAttributes;
+		case "INPUT_PROCESSOR":   	return inputProcessor;
+		case "MAINLOOP":         	return mainLoop;
+		case "PACTOR_CONTROLLER": 	return playerController;
+		default:                 	throw new RuntimeException("Writable by name " + name + " does not exist for this game.");
+		}
+	}
+	
+	final public String[] getWritables() {
+		return WRITABLES;
+	}
 }
