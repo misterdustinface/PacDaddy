@@ -7,7 +7,7 @@ local function sortFilesByLoadPriority(filelist)
 end
 
 local function getAbsoluteFiles(pathname)
-    --print("PATH: " .. pathname)
+    print("PATH: " .. pathname)
     local absfiles = {}
     local filepath = luajava.newInstance("java.io.File", pathname)
     
