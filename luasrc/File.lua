@@ -9,4 +9,11 @@ public.path = function(self, ...)
     return table.concat({...}, pathSeparator)
 end
 
+public.toString = function(self, filepath)
+    local file = io.open(filepath, "rb")
+    local filestring = file:read("*a")
+    file:close()
+    return filestring
+end
+
 return public

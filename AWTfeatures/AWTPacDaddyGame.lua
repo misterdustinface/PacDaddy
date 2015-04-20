@@ -14,6 +14,9 @@ local inputProcesses = {
     [KEYS.DOWN]  = function() GAME:sendCommand("DOWN")  end,
     [KEYS.RIGHT] = function() GAME:sendCommand("RIGHT") end,
     [KEYS.P]     = function() GAME:sendCommand(tif(GAME:getValueOf("IS_PAUSED"), "PLAY", "PAUSE")) end,
+    [KEYS.R]     = function() GAME:sendCommand("RELOAD") end,
+    [KEYS.Q]     = function() GAME:sendCommand("QUIT")   end,
+    [KEYS.ESC]   = function() GAME:sendCommand("QUIT")   end,
 }
 
 local function keypressDispatch(AWTkeyevent)
@@ -21,6 +24,8 @@ local function keypressDispatch(AWTkeyevent)
     local inputProcess = inputProcesses[keycode]
     if type(inputProcess) == "function" then
         inputProcess()
+    else
+        print(keycode)
     end
 end
 
@@ -29,6 +34,7 @@ local colormap = {
     ["WALL"]   = Color.BLUE,
     ["FLOOR"]  = Color.BLACK,
     ["ENEMY"]  = Color.RED,
+    ["PICKUP"] = Color.WHITE,
 }
 
 local function getTileColor(tilename)

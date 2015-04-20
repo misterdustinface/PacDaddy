@@ -10,7 +10,7 @@ local function getGameSpeed__ups()
 end
 
 local function shiftGameSpeed__ups(shiftamount__ups)
-    gameAttributes:setAttributes("GAMESPEED__UPS", getGameSpeed__ups() + shiftamount__ups)
+    gameAttributes:setAttribute("GAMESPEED__UPS", getGameSpeed__ups() + shiftamount__ups)
 end
 
 local function movePactorUp()
@@ -49,6 +49,17 @@ local function decreaseGameSpeed()
     mainLoop:setUpdatesPerSecond(getGameSpeed__ups())
 end
 
+local function reloadFeatures()
+    GAME:sendCommand("PAUSE")
+    loadFeatures("features")
+    loadFeatures("tests")
+    GAME:sendCommand("PLAY")
+end
+
+local function quitGame()
+    GAME:quit()
+end
+
 inputProcessor:addCommand("UP",          VoidFunctionPointer(movePactorUp)) 
 inputProcessor:addCommand("DOWN",        VoidFunctionPointer(movePactorDown))
 inputProcessor:addCommand("LEFT",        VoidFunctionPointer(movePactorLeft)) 
@@ -57,3 +68,5 @@ inputProcessor:addCommand("PAUSE",       VoidFunctionPointer(pause))
 inputProcessor:addCommand("PLAY",        VoidFunctionPointer(play))
 inputProcessor:addCommand("GAMESPEED++", VoidFunctionPointer(increaseGameSpeed)) 
 inputProcessor:addCommand("GAMESPEED--", VoidFunctionPointer(decreaseGameSpeed))
+inputProcessor:addCommand("RELOAD",      VoidFunctionPointer(reloadFeatures))
+inputProcessor:addCommand("QUIT",        VoidFunctionPointer(quitGame))

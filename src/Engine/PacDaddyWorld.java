@@ -3,6 +3,7 @@ package Engine;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import datastructures.Queue;
 import datastructures.Table;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
@@ -15,11 +16,15 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	private int[][] wallworld;
 	private GameAttributes noPactorAvailableTileAttributes;
 	
+	final private Queue<String> removalQueue;
+	
 	public PacDaddyWorld() {
 		tilenames = new ArrayList<String>();
 		pactors = new Table<Pactor>();
 		noPactorAvailableTileAttributes = new GameAttributes();
 		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
+
+		removalQueue = new Queue<String>();
 		
 		loadFromString("1111\n"
 					 + "1001\n"
@@ -35,16 +40,22 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		for (String name : pactors.getNames()) {
 			Pactor toMove = getPactor(name);
 			movePactor(toMove);
+			checkPactorCollisionsWithPactor(toMove);
+		}
+		
+		while (!removalQueue.isEmpty()) {
+			pactors.remove(removalQueue.dequeue());
 		}
 	}
 	
 	final public void addPactor(String name, Pactor p) {
-		pactors.insert(name, p);
+		p.setAttribute("NAME", name);
 		p.respawn();
+		pactors.insert(name, p);
 	}
 	
 	final public void removePactor(String name) {
-		pactors.remove(name);
+		removalQueue.enqueue(name);
 	}
 	
 	final public Pactor getPactor(String name) {
@@ -54,7 +65,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	public PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
-			if (p.getTileCoordinate().row == row && p.getTileCoordinate().col == col) {
+			if (p.getRow() == row && p.getCol() == col) {
 				return p;
 			}
 		}
@@ -68,17 +79,18 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public int[][] getTiledBoard() {
 		
-		TileCoordinate pactorCoordinate;
 		int[][] worldRepresentation = getWallWorldCopy();
 
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
-			pactorCoordinate = p.getTileCoordinate();
 			if (p.getValueOf("IS_PLAYER") != null) {
-				worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("PLAYER");
+				worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf("PLAYER");
 			}
 			if (p.getValueOf("IS_ENEMY") != null) {
-				worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("ENEMY");
+				worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf("ENEMY");
+			}
+			if (p.getValueOf("IS_PICKUP") != null) {
+				worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf("PICKUP");
 			}
 		}
 		
@@ -90,26 +102,25 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	private void movePactor(Pactor toMove) {
-		TileCoordinate coordinate = toMove.getTileCoordinate();
 		switch((String) toMove.getValueOf("DIRECTION")) {
 		case "UP":
-			if (!isWall(coordinate.row - 1, coordinate.col)) {
-				--coordinate.row;
+			if (!isWall(toMove.getRow() - 1, toMove.getCol())) {
+				toMove.shiftRow(-1);
 			}
 			break;
 		case "DOWN":
-			if (!isWall(coordinate.row + 1, coordinate.col)) {
-				++coordinate.row;
+			if (!isWall(toMove.getRow() + 1, toMove.getCol())) {
+				toMove.shiftRow(+1);
 			}
 			break;
 		case "RIGHT":
-			if (!isWall(coordinate.row, coordinate.col + 1)) {
-				++coordinate.col;
+			if (!isWall(toMove.getRow(), toMove.getCol() + 1)) {
+				toMove.shiftCol(+1);
 			}
 			break;
 		case "LEFT":
-			if (!isWall(coordinate.row, coordinate.col - 1)) {
-				--coordinate.col;
+			if (!isWall(toMove.getRow(), toMove.getCol() - 1)) {
+				toMove.shiftCol(-1);
 			}
 			break;
 		}
@@ -133,6 +144,16 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private int getCols() {
 		return wallworld[0].length;
+	}
+	
+	private void checkPactorCollisionsWithPactor(Pactor p) {
+		for (String otherName : pactors.getNames()) {
+			Pactor other = pactors.get(otherName);
+			if (p != other && p.getRow() == other.getRow() && p.getCol() == other.getCol()) {
+				p.notifyCollidedWith(other);
+				other.notifyCollidedWith(p);
+			}
+		}
 	}
 	
 }
