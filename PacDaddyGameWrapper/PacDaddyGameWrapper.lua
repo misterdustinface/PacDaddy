@@ -66,11 +66,6 @@ local function getModifiablePactor(this, name)
     return this:getModifiableWorld():getPactor(name)
 end
 
---local function setPlayerPosition(this, row, col)
---    game.world:getPactor("PLAYER"):getTileCoordinate().row = row
---    game.world:getPactor("PLAYER"):getTileCoordinate().col = col
---end
-
 public.boardReader                   = game:getBoardReader()
 public.inputProcessor                = game:getInputProcessor()
 public.attributeReader               = game:getGameAttributeReader()

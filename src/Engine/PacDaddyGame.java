@@ -2,105 +2,29 @@ package Engine;
 
 import InternalInterfaces.WriteAccessor;
 import PacDaddyApplicationInterfaces.PacDaddyApplication;
+import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyInput;
-import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import base.Application;
-import functionpointers.VoidFunctionPointer;
 
 public class PacDaddyGame extends Application implements PacDaddyApplication, WriteAccessor {
 	
 	final private PacDaddyWorld	world;
 	final private GameAttributes gameAttributes;
 	final private FunctionDispatchCommandProcessor inputProcessor;
-	
 	final private PacDaddyMainLoop mainLoop;
-	final private PactorController playerController;
+	final private PactorController pactorController;
 	
-	public PacDaddyGame() {		
-		mainLoop = new PacDaddyMainLoop();
-		world = new PacDaddyWorld();
+	public PacDaddyGame() {
+		world            = new PacDaddyWorld();
+		gameAttributes   = new GameAttributes();
+		inputProcessor   = new FunctionDispatchCommandProcessor();
+		mainLoop         = new PacDaddyMainLoop();
+		pactorController = new PactorController();
+		
 		mainLoop.setWorld(world);
-		
-		world.addTileType("FLOOR");
-		world.addTileType("WALL");
-		world.addTileType("PLAYER");
-		world.addTileType("ENEMY");
-		
-//		world.loadFromString("1111111111111\n"
-//				           + "1000000000001"
-//				           + "1000000000001"
-//				           + "1000000000001"
-//				           + "1000110110001"
-//				           + "1000100010001"
-//				           + "1000111110001"
-//				           + "1000000000001"
-//				           + "1000000000001"
-//				           + "1000000000001"
-//				           + "1111111111111\n");
-		
-		world.addPactor("PLAYER", new Pactor());
-		
-		world.getPactor("PLAYER").getTileCoordinate().row = 3;
-		world.getPactor("PLAYER").getTileCoordinate().col = 3;
-		
-		playerController = new PactorController();
-		playerController.setPactor(world.getPactor("PLAYER"));
-		
-		inputProcessor = new FunctionDispatchCommandProcessor();
-		gameAttributes = new GameAttributes();
-		
-		gameAttributes.setAttribute("SCORE", 0);
-		gameAttributes.setAttribute("LIVES", 3);
-		gameAttributes.setAttribute("GAMESPEED__UPS", 15);
-		gameAttributes.setAttribute("IS_PAUSED", false);
-		
-		inputProcessor.addCommand("UP", new VoidFunctionPointer() {
-			public void call() {
-				playerController.sendCommandToPactor("UP");
-			}
-		});
-		inputProcessor.addCommand("DOWN", new VoidFunctionPointer() {
-			public void call() {
-				playerController.sendCommandToPactor("DOWN");
-			}
-		});
-		inputProcessor.addCommand("LEFT", new VoidFunctionPointer() {
-			public void call() {
-				playerController.sendCommandToPactor("LEFT");
-			}
-		});
-		inputProcessor.addCommand("RIGHT", new VoidFunctionPointer() {
-			public void call() {
-				playerController.sendCommandToPactor("RIGHT");
-			}
-		});
-		inputProcessor.addCommand("PLAY", new VoidFunctionPointer() {
-			public void call() {
-				gameAttributes.setAttribute("IS_PAUSED", false);
-				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
-			}
-		});
-		inputProcessor.addCommand("PAUSE", new VoidFunctionPointer() {
-			public void call() {
-				gameAttributes.setAttribute("IS_PAUSED", true);
-				mainLoop.setUpdatesPerSecond(0);
-			}
-		});
-		inputProcessor.addCommand("GAMESPEED++", new VoidFunctionPointer() {
-			public void call() {
-				shiftGameSpeed__ups(+10);
-				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
-			}
-		});
-		inputProcessor.addCommand("GAMESPEED--", new VoidFunctionPointer() {
-			public void call() {
-				shiftGameSpeed__ups(-10);
-				mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
-			}
-		});
-		
-		mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
+
+		//mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
 		setMain(mainLoop);
 	}
 	
@@ -116,14 +40,6 @@ public class PacDaddyGame extends Application implements PacDaddyApplication, Wr
 		return inputProcessor;
 	}
 	
-	private void shiftGameSpeed__ups(int shiftamount__ups) {
-		gameAttributes.setAttribute("GAMESPEED__UPS", getGameSpeed__ups() + shiftamount__ups);
-	}
-	
-	private int getGameSpeed__ups() {
-		return (Integer)gameAttributes.getValueOf("GAMESPEED__UPS");
-	}
-	
 	final static String[] WRITABLES = new String[] {"WORLD", "ATTRIBUTES", "INPUT_PROCESSOR", "MAINLOOP", "PACTOR_CONTROLLER"};
 	
 	final public Object getWritable(String name) {
@@ -132,7 +48,7 @@ public class PacDaddyGame extends Application implements PacDaddyApplication, Wr
 		case "ATTRIBUTES":       	return gameAttributes;
 		case "INPUT_PROCESSOR":   	return inputProcessor;
 		case "MAINLOOP":         	return mainLoop;
-		case "PACTOR_CONTROLLER": 	return playerController;
+		case "PACTOR_CONTROLLER": 	return pactorController;
 		default:                 	throw new RuntimeException("Writable by name " + name + " does not exist for this game.");
 		}
 	}

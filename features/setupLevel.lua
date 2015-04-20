@@ -1,7 +1,12 @@
---local args = {...}
---local GAME = args[1]
+local world = GAME:getModifiableWorld()
+local controller = GAME:getModifiablePactorController()
 
-GAME:getModifiableWorld():loadFromString(
+world:addTileType("FLOOR")
+world:addTileType("WALL")
+world:addTileType("PLAYER")
+world:addTileType("ENEMY")
+
+world:loadFromString(
      "1111111111111\n"
   .. "1000000000001"
   .. "1000000000001"
@@ -15,4 +20,8 @@ GAME:getModifiableWorld():loadFromString(
   .. "1111111111111\n"
 )
 
---return GAME
+world:addPactor("PLAYER", require("PacDaddyGameWrapper/Pactor"))
+world:getPactor("PLAYER"):getTileCoordinate().row = 3
+world:getPactor("PLAYER"):getTileCoordinate().col = 3
+
+controller:setPactor(world:getPactor("PLAYER"))

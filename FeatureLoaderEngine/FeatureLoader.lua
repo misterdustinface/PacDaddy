@@ -32,7 +32,7 @@ function loadFeatures(featuresFolderFilePath)
     local files = getAbsoluteFiles(featuresFolderFilePath)
     sortFilesByLoadPriority(files)
     for _, filename in ipairs(files) do
-        print(filename)
+        if DISPLAY_LOADED_FILES then print(filename) end
         local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a lua chunk")
         chunk()
     end
@@ -40,4 +40,8 @@ end
 
 function setGamePath(gameWrapperFilePath)
     GAME = require(gameWrapperFilePath)
+end
+
+function displayLoadedFiles()
+    DISPLAY_LOADED_FILES = true
 end

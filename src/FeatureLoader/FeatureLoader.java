@@ -22,6 +22,15 @@ public class FeatureLoader {
 		callFunctionWithArgument("loadFeatures", featuresFolder);
 	}
 	
+	public void displayLoadedFiles() {
+		callFunction("displayLoadedFiles");
+	}
+	
+	private void callFunction(String functionname) {
+		LuaValue function = globals.get(functionname);
+		function.call();
+	}
+	
 	private void callFunctionWithArgument(String functionname, String argument) {
 		LuaValue function = globals.get(functionname);
 		function.call(LuaValue.valueOf(argument));

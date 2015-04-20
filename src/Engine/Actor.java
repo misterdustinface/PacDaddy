@@ -9,7 +9,7 @@ public class Actor {
 	
 	final private Table<VoidFunctionPointer> actions;
 	
-	public Actor() {
+	Actor() {
 		actions = new Table<VoidFunctionPointer>();
 	}
 	

@@ -1,6 +1,3 @@
---local args = {...}
---local GAME = args[1]
-
 require("luasrc/tif")
 require("luasrc/VoidFunctionPointer")
 
@@ -116,5 +113,3 @@ local function create()
 end
 
 create()
-
---return GAME
