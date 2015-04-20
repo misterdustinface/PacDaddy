@@ -9,6 +9,7 @@ public class AWTPacDaddyGameLauncher {
 		loader.setGamePath("PacDaddyGameWrapper/PacDaddyGameWrapper");
 		loader.loadFeatures("features");
 		loader.loadFeatures("AWTfeatures");
+		loader.loadFeatures("tests");
 	}
 
 }
