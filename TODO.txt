@@ -1,7 +1,2 @@
-FEATURELOADER.LUA LINE 5
-local function sortFilesByLoadPriority(filelist)
-    -- TODO SORT
-end
-
 PACDADDYWORLD.JAVA LINE 67, TRANSFORM CONTSTRUCTION OF TILE BOARD INTO LUA FEATURE
 getTiledBoard()

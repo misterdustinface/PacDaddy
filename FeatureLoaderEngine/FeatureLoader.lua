@@ -1,5 +1,14 @@
-local function sortFilesByLoadPriority(filelist)
-    -- TODO SORT
+local function sortFilesByLoadPriority(featuresFolderFilePath, filelist)
+    local orderingFilePath = featuresFolderFilePath .. "/" .. "order.lua"
+    local ok, ordering = pcall(dofile, orderingFilePath)
+    if ok then
+        for index = 1, #ordering do
+            ordering[index] = featuresFolderFilePath .. "/" .. ordering[index]
+        end
+        return ordering
+    else 
+        return filelist
+    end
 end
 
 -- Because table.insert(A, table.unpack(B)) is fucked up in luaj 
@@ -30,7 +39,7 @@ end
 
 function loadFeatures(featuresFolderFilePath)
     local files = getAbsoluteFiles(featuresFolderFilePath)
-    sortFilesByLoadPriority(files)
+    sortFilesByLoadPriority(featuresFolderFilePath, files)
     for _, filename in ipairs(files) do
         if DISPLAY_LOADED_FILES then print(filename) end
         local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a lua chunk")
