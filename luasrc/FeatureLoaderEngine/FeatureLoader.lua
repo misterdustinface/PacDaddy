@@ -6,8 +6,14 @@ local function sortFilesByLoadPriority(filelist)
     -- TODO SORT
 end
 
+-- Because table.insert(A, table.unpack(B)) is fucked up in luaj 
+local function mergetables(A, B)
+    for index = 1, #B do
+        table.insert(A, B[index])
+    end
+end
+
 local function getAbsoluteFiles(pathname)
-    print("PATH: " .. pathname)
     local absfiles = {}
     local filepath = luajava.newInstance("java.io.File", pathname)
     
@@ -17,7 +23,7 @@ local function getAbsoluteFiles(pathname)
             local subfile = files[i]
             local subfilepath = subfile:getPath()
             local recursiveResult = getAbsoluteFiles(subfilepath)
-            table.insert(absfiles, table.unpack(recursiveResult))
+            mergetables(absfiles, recursiveResult)
         end
     elseif filepath:isFile() and not filepath:isHidden() then
         table.insert(absfiles, pathname)
@@ -26,14 +32,16 @@ local function getAbsoluteFiles(pathname)
     return absfiles
 end
 
-local function loadFeatures(featuresFolderFilePath) 
-    local GAME = require(GAME_WRAPPER_FILE_PATH)
+local function loadFeatures(gameWrapperFilePath, featuresFolderFilePath) 
+    GAME = require(gameWrapperFilePath)
     local files = getAbsoluteFiles(featuresFolderFilePath)
     sortFilesByLoadPriority(files)
     for _, filename in ipairs(files) do
+        print(filename)
         local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a lua chunk")
-        assert(pcall(chunk, GAME), "Call to lua chunk " .. filename .. " failed!")
+        chunk()
+        --GAME = chunk(GAME) or GAME
     end
 end
 
-loadFeatures(FEATURES_FOLDER_FILE_PATH)
+loadFeatures(GAME_WRAPPER_FILE_PATH, FEATURES_FOLDER_FILE_PATH)

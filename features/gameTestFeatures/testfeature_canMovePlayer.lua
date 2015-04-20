@@ -1,5 +1,5 @@
-local args = {...}
-local GAME = args[1]
+--local args = {...}
+--local GAME = args[1]
 
 local test = require("luasrc/Test")
 test.failureMessage = "Could not change the player direction."

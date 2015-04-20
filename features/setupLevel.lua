@@ -1,5 +1,5 @@
-local args = {...}
-local GAME = args[1]
+--local args = {...}
+--local GAME = args[1]
 
 GAME:getModifiableWorld():loadFromString(
      "1111111111111\n"
@@ -14,3 +14,5 @@ GAME:getModifiableWorld():loadFromString(
   .. "1000000000001"
   .. "1111111111111\n"
 )
+
+--return GAME

@@ -1,5 +1,5 @@
-local args = {...}
-local GAME = args[1]
+--local args = {...}
+--local GAME = args[1]
 
 require("luasrc/tif")
 require("luasrc/VoidFunctionPointer")
@@ -7,7 +7,7 @@ require("luasrc/VoidFunctionPointer")
 local Color = luajava.bindClass("java.awt.Color")
 local JFrame = luajava.bindClass("javax.swing.JFrame")
 local Graphics2D = luajava.bindClass("java.awt.Graphics2D")
-local KEYS = require("AWTfeatures/AWTKeycodes")
+local KEYS = require("AWTLib/AWTKeycodes")
 
 local DISPLAY
 
@@ -102,10 +102,10 @@ local function create()
     local SCREEN_HEIGHT = 400
     local TITLE = "Pac Daddy"
     
-    local inputFactory = require("AWTfeatures/AWTInputFactory")
+    local inputFactory = require("AWTLib/AWTInputFactory")
     local keylistener = inputFactory.createKeyListener(keypressDispatch)
     
-    DISPLAY = require("AWTfeatures/AWTDisplay")
+    DISPLAY = require("AWTLib/AWTDisplay")
     DISPLAY:init(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE)
     DISPLAY:addKeyListener(keylistener);
     
@@ -116,3 +116,5 @@ local function create()
 end
 
 create()
+
+--return GAME
