@@ -70,16 +70,14 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		
 		TileCoordinate pactorCoordinate;
 		int[][] worldRepresentation = getWallWorldCopy();
-		
-		if(pactors.contains("PLAYER")) {
-			pactorCoordinate = getPactor("PLAYER").getTileCoordinate();
-			worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("PLAYER");
-		}
 
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
+			pactorCoordinate = p.getTileCoordinate();
+			if (p.getValueOf("IS_PLAYER") != null) {
+				worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("PLAYER");
+			}
 			if (p.getValueOf("IS_ENEMY") != null) {
-				pactorCoordinate = p.getTileCoordinate();
 				worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("ENEMY");
 			}
 		}
