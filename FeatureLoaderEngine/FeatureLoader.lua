@@ -1,5 +1,5 @@
 local function sortFilesByLoadPriority(featuresFolderFilePath, filelist)
-    local orderingFilePath = featuresFolderFilePath .. "/" .. "order.lua"
+    local orderingFilePath = featuresFolderFilePath .. "/" .. "_order.lua"
     local ok, ordering = pcall(dofile, orderingFilePath)
     if ok then
         for index = 1, #ordering do
@@ -39,7 +39,7 @@ end
 
 function loadFeatures(featuresFolderFilePath)
     local files = getAbsoluteFiles(featuresFolderFilePath)
-    sortFilesByLoadPriority(featuresFolderFilePath, files)
+    files = sortFilesByLoadPriority(featuresFolderFilePath, files)
     for _, filename in ipairs(files) do
         if DISPLAY_LOADED_FILES then print(filename) end
         local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a lua chunk")

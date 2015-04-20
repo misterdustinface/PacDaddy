@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import datastructures.Queue;
 import datastructures.Table;
+import InternalInterfaces.PactorToTileFunction;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 
@@ -15,21 +16,16 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	final Table<Pactor> pactors;
 	private int[][] wallworld;
 	private GameAttributes noPactorAvailableTileAttributes;
-	
-	final private Queue<String> removalQueue;
+	private PactorToTileFunction pactorToTile;
+	final private Queue<String> removalQueue;	
 	
 	public PacDaddyWorld() {
 		tilenames = new ArrayList<String>();
 		pactors = new Table<Pactor>();
 		noPactorAvailableTileAttributes = new GameAttributes();
 		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
-
+		pactorToTile = PactorToTileFunction.EMPTY_FUNCTION;
 		removalQueue = new Queue<String>();
-		
-		loadFromString("1111\n"
-					 + "1001\n"
-					 + "1001\n"
-					 + "1111\n");
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -77,21 +73,18 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		tilenamesarray = tilenames.toArray(new String[]{});
 	}
 	
+	public void setPactorToTileFunction(PactorToTileFunction PACTOR_TO_TILE) {
+		pactorToTile = PACTOR_TO_TILE;
+	}
+	
 	public int[][] getTiledBoard() {
 		
 		int[][] worldRepresentation = getWallWorldCopy();
 
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
-			if (p.getValueOf("IS_PLAYER") != null) {
-				worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf("PLAYER");
-			}
-			if (p.getValueOf("IS_ENEMY") != null) {
-				worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf("ENEMY");
-			}
-			if (p.getValueOf("IS_PICKUP") != null) {
-				worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf("PICKUP");
-			}
+			String s = pactorToTile.getTileName(p);
+			worldRepresentation[p.getRow()][p.getCol()] = tilenames.indexOf(s);
 		}
 		
 		return worldRepresentation;
