@@ -1,6 +1,6 @@
 local public = {}
 
-local game = require("luasrc/PacDaddyGameWrapper/PacDaddyGameSingleton")
+local game = require("PacDaddyGameWrapper/PacDaddyGameSingleton")
 
 local function addComponentToGame(this, name, implementation)
     game:addComponent(name, implementation)

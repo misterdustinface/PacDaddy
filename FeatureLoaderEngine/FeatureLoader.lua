@@ -1,7 +1,3 @@
-local args = {...}
-local GAME_WRAPPER_FILE_PATH    = args[1]
-local FEATURES_FOLDER_FILE_PATH = args[2]
-
 local function sortFilesByLoadPriority(filelist)
     -- TODO SORT
 end
@@ -32,16 +28,16 @@ local function getAbsoluteFiles(pathname)
     return absfiles
 end
 
-local function loadFeatures(gameWrapperFilePath, featuresFolderFilePath) 
-    GAME = require(gameWrapperFilePath)
+function loadFeatures(featuresFolderFilePath)
     local files = getAbsoluteFiles(featuresFolderFilePath)
     sortFilesByLoadPriority(files)
     for _, filename in ipairs(files) do
         print(filename)
         local chunk = assert(loadfile(filename), "Failed to load " .. filename .. " as a lua chunk")
         chunk()
-        --GAME = chunk(GAME) or GAME
     end
 end
 
-loadFeatures(GAME_WRAPPER_FILE_PATH, FEATURES_FOLDER_FILE_PATH)
+function setGamePath(gameWrapperFilePath)
+    GAME = require(gameWrapperFilePath)
+end

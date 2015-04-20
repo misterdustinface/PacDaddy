@@ -6,21 +6,30 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 public class FeatureLoader {
 	
-	private String featureLoaderEngineScriptFile = "luasrc/FeatureLoaderEngine/FeatureLoader.lua";
-	private String gameWrapperScriptPath;
+	private Globals globals;
+	private String featureLoaderEngineScriptFile = "FeatureLoaderEngine/FeatureLoader.lua";
 	
 	public FeatureLoader() {
-		
+		globals = JsePlatform.standardGlobals();
+		loadLuaFeatureLoaderFunctionsToGlobalFunctions();
 	}
 	
 	public void setGamePath(String path) {
-		gameWrapperScriptPath = path;
+		callFunctionWithArgument("setGamePath", path);
 	}
 	
 	public void loadFeatures(String featuresFolder) {
-		Globals globals = JsePlatform.standardGlobals();
+		callFunctionWithArgument("loadFeatures", featuresFolder);
+	}
+	
+	private void callFunctionWithArgument(String functionname, String argument) {
+		LuaValue function = globals.get(functionname);
+		function.call(LuaValue.valueOf(argument));
+	}
+	
+	private void loadLuaFeatureLoaderFunctionsToGlobalFunctions() {
 		LuaValue chunk = globals.loadfile(featureLoaderEngineScriptFile);
-		chunk.call( LuaValue.valueOf(gameWrapperScriptPath), LuaValue.valueOf(featuresFolder) );
+		chunk.call();
 	}
 	
 }
