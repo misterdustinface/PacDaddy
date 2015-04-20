@@ -24,4 +24,4 @@ local player = require("PacDaddyGameWrapper/Pactor")
 player:setSpawn(8, 6)
 world:addPactor("PLAYER", player)
 
-controller:setPactor(world:getPactor("PLAYER"))
+controller:setPactor(player)
