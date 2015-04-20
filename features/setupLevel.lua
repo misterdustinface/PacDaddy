@@ -20,8 +20,8 @@ world:loadFromString(
   .. "1111111111111\n"
 )
 
-world:addPactor("PLAYER", require("PacDaddyGameWrapper/Pactor"))
-world:getPactor("PLAYER"):getTileCoordinate().row = 3
-world:getPactor("PLAYER"):getTileCoordinate().col = 3
+local player = require("PacDaddyGameWrapper/Pactor")
+player:setSpawn(8, 6)
+world:addPactor("PLAYER", player)
 
 controller:setPactor(world:getPactor("PLAYER"))

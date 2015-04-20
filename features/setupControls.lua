@@ -1,3 +1,5 @@
+require("luasrc/VoidFunctionPointer")
+
 local inputProcessor   = GAME:getModifiableInputProcessor()
 local pactorController = GAME:getModifiablePactorController()
 local gameAttributes   = GAME:getModifiableAttributes()
@@ -32,7 +34,7 @@ local function pause()
     mainLoop:setUpdatesPerSecond(0)
 end
 
-local function unpause()
+local function play()
     gameAttributes:setAttribute("IS_PAUSED", false)
     mainLoop:setUpdatesPerSecond(getGameSpeed__ups())
 end
@@ -47,9 +49,11 @@ local function decreaseGameSpeed()
     mainLoop:setUpdatesPerSecond(getGameSpeed__ups())
 end
 
-inputProcessor:addCommand("UP",    VoidFunctionPointer(movePactorUp)) 
-inputProcessor:addCommand("DOWN",  VoidFunctionPointer(movePactorDown))
-inputProcessor:addCommand("LEFT",  VoidFunctionPointer(movePactorLeft)) 
-inputProcessor:addCommand("RIGHT", VoidFunctionPointer(movePactorRight)) 
+inputProcessor:addCommand("UP",          VoidFunctionPointer(movePactorUp)) 
+inputProcessor:addCommand("DOWN",        VoidFunctionPointer(movePactorDown))
+inputProcessor:addCommand("LEFT",        VoidFunctionPointer(movePactorLeft)) 
+inputProcessor:addCommand("RIGHT",       VoidFunctionPointer(movePactorRight)) 
+inputProcessor:addCommand("PAUSE",       VoidFunctionPointer(pause))
+inputProcessor:addCommand("PLAY",        VoidFunctionPointer(play))
 inputProcessor:addCommand("GAMESPEED++", VoidFunctionPointer(increaseGameSpeed)) 
 inputProcessor:addCommand("GAMESPEED--", VoidFunctionPointer(decreaseGameSpeed))

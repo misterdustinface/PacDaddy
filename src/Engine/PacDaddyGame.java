@@ -21,10 +21,8 @@ public class PacDaddyGame extends Application implements PacDaddyApplication, Wr
 		inputProcessor   = new FunctionDispatchCommandProcessor();
 		mainLoop         = new PacDaddyMainLoop();
 		pactorController = new PactorController();
-		
 		mainLoop.setWorld(world);
-
-		//mainLoop.setUpdatesPerSecond(getGameSpeed__ups());
+		mainLoop.setUpdatesPerSecond(0);
 		setMain(mainLoop);
 	}
 	

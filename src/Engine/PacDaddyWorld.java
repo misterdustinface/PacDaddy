@@ -13,10 +13,13 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	final private ArrayList<String> tilenames;	
 	final Table<Pactor> pactors;
 	private int[][] wallworld;
+	private GameAttributes noPactorAvailableTileAttributes;
 	
 	public PacDaddyWorld() {
 		tilenames = new ArrayList<String>();
 		pactors = new Table<Pactor>();
+		noPactorAvailableTileAttributes = new GameAttributes();
+		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
 		
 		loadFromString("1111\n"
 					 + "1001\n"
@@ -30,12 +33,14 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public void tick() {
 		for (String name : pactors.getNames()) {
-			movePactor(name);
+			Pactor toMove = getPactor(name);
+			movePactor(toMove);
 		}
 	}
 	
 	final public void addPactor(String name, Pactor p) {
 		pactors.insert(name, p);
+		p.respawn();
 	}
 	
 	final public void removePactor(String name) {
@@ -47,7 +52,13 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
-		return pactors.get("PLAYER"); // TODO FIXME - make search algorithm to grab pactor at coordinate
+		for (String name : pactors.getNames()) {
+			Pactor p = pactors.get(name);
+			if (p.getTileCoordinate().row == row && p.getTileCoordinate().col == col) {
+				return p;
+			}
+		}
+		return noPactorAvailableTileAttributes;
 	}
 	
 	public void addTileType(String name) {
@@ -57,17 +68,25 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public int[][] getTiledBoard() {
 		
+		TileCoordinate pactorCoordinate;
 		int[][] worldRepresentation = getWallWorldCopy();
 		
-		TileCoordinate actorCoordinate = getPactor("PLAYER").getTileCoordinate();
-		worldRepresentation[actorCoordinate.row][actorCoordinate.col] = tilenames.indexOf("PLAYER");
+//		if(pactors.contains("PLAYER")) {
+//			pactorCoordinate = getPactor("PLAYER").getTileCoordinate();
+//			worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("PLAYER");
+//		}
 		
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
 			if (p.getValueOf("IS_ENEMY") != null) {
-				actorCoordinate = p.getTileCoordinate();
-				worldRepresentation[actorCoordinate.row][actorCoordinate.col] = tilenames.indexOf("ENEMY");
+				pactorCoordinate = p.getTileCoordinate();
+				worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("ENEMY");
 			}
+		}
+		
+		if(pactors.contains("PLAYER")) {
+			pactorCoordinate = getPactor("PLAYER").getTileCoordinate();
+			worldRepresentation[pactorCoordinate.row][pactorCoordinate.col] = tilenames.indexOf("PLAYER");
 		}
 		
 		return worldRepresentation;
@@ -77,8 +96,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return tilenamesarray;
 	}
 	
-	private void movePactor(String name) {
-		Pactor toMove = getPactor(name);
+	private void movePactor(Pactor toMove) {
 		TileCoordinate coordinate = toMove.getTileCoordinate();
 		switch((String) toMove.getValueOf("DIRECTION")) {
 		case "UP":

@@ -28,6 +28,7 @@ local colormap = {
     ["PLAYER"] = Color.YELLOW,
     ["WALL"]   = Color.BLUE,
     ["FLOOR"]  = Color.BLACK,
+    ["ENEMY"]  = Color.RED,
 }
 
 local function getTileColor(tilename)

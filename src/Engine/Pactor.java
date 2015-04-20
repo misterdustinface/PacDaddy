@@ -6,12 +6,14 @@ import functionpointers.VoidFunctionPointer;
 
 public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeSetter {
 
-	final private GameAttributes attributes;
+	final private TileCoordinate spawnPos;
 	final private TileCoordinate position;
+	final private GameAttributes attributes;
 	
 	public Pactor() {
-		attributes = new GameAttributes();
+		spawnPos = new TileCoordinate();
 		position = new TileCoordinate();
+		attributes = new GameAttributes();
 		learnBasics();
 	}
 	
@@ -25,6 +27,16 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 
 	public String[] getAttributes() {
 		return attributes.getAttributes();
+	}
+	
+	public void respawn() {
+		position.row = spawnPos.row;
+		position.col = spawnPos.col;
+	}
+	
+	public void setSpawn(int row, int col) {
+		spawnPos.row = row;
+		spawnPos.col = col;
 	}
 	
 	public TileCoordinate getTileCoordinate() {
