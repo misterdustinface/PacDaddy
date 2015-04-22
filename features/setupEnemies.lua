@@ -3,22 +3,26 @@ local mainLoop = GAME:getModifiableGameLoop()
 local world = GAME:getModifiableWorld()
 
 local frienemy = require("PacDaddyGameWrapper/Enemy")
-frienemy:setSpawn(5, 6)
 world:addPactor("FRIENEMY", frienemy)
+world:setPactorSpawn("FRIENEMY", 5, 6)
+world:respawnPactor("FRIENEMY")
 
 local function followPlayer1()
-    local player1 = world:getPactor("PLAYER1")
+    local player1Pos = {}
+    local myPos      = {}
+    player1Pos.row   = world:getPactorRow("PLAYER1")
+    player1Pos.col   = world:getPactorCol("PLAYER1")
+    myPos.row        = world:getPactorRow("FRIENEMY")
+    myPos.col        = world:getPactorCol("FRIENEMY")
     
-    if player1:getRow() < frienemy:getRow() then
+    if player1Pos.row < myPos.row then
         frienemy:performAction("UP")
-    elseif player1:getRow() > frienemy:getRow() then
+    elseif player1Pos.row > myPos.row then
         frienemy:performAction("DOWN")
-    elseif player1:getCol() < frienemy:getCol() then
+    elseif player1Pos.col < myPos.col then
         frienemy:performAction("LEFT")
-    elseif player1:getCol() > frienemy:getCol() then
-        frienemy:performAction("RIGHT")
     else
-        frienemy:performAction("NONE")
+        frienemy:performAction("RIGHT")
     end
     
 end

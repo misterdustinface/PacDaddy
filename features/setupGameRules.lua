@@ -8,8 +8,8 @@ local function gameRules()
     end
     
     if GAME:getValueOf("LOST_GAME") == true then
-        print("LOST GAME.")
-        GAME:sendCommand("PAUSE")
+        --print("LOST GAME.")
+        --GAME:sendCommand("PAUSE")
         --GAME:quit()
     end
 end
