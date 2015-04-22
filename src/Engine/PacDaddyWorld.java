@@ -34,30 +34,27 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
 		pactorToTile = PactorToTileFunction.EMPTY_FUNCTION;
 		removalQueue = new Queue<String>();
-		pactorUpdater = PactorUpdateFunction.EMPTY_FUNCTION;
+		pactorUpdater = new PactorUpdateFunction() {
+			public void call(Pactor toUpdate) {
+				updatePactor(toUpdate);
+			}
+		};
 	}
 	
 	public void loadFromString(String worldstring) {
 		wallworld = Utilities.StringToIntArray(worldstring);
 	}
 	
-	public void tick() {
-		for (String name : pactors.getNames()) {
-			Pactor p = getPactor(name);
-			//pactorUpdater.call(p);
-			updatePactor(p);
-		}
-		clearRemovalQueue();
-	}
-	
 	public void setPactorUpdateFunction(PactorUpdateFunction UPDATE_FUNC) {
 		pactorUpdater = UPDATE_FUNC;
 	}
 	
-	private void updatePactor(Pactor p) {
-		String direction = (String) p.getValueOf("REQUESTED_DIRECTION");
-		movePactorInDirection(p, direction);
-		notifyPactorCollisions(p);
+	public void tick() {
+		for (String name : pactors.getNames()) {
+			Pactor p = getPactor(name);
+			pactorUpdater.call(p);
+		}
+		clearRemovalQueue();
 	}
 	
 	private void clearRemovalQueue() {
@@ -181,6 +178,25 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return wallworld[0].length;
 	}
 	
+	private void updatePactor(Pactor p) {
+		String direction = (String) p.getValueOf("REQUESTED_DIRECTION");
+		movePactorInDirection(p, direction);
+		notifyPactorCollisions(p);
+	}
+	
+	private void movePactorInDirection(Pactor toMove, String direction) {
+		switch(direction) {
+		case "UP":    moveUp(toMove);
+			break;
+		case "DOWN":  moveDown(toMove);
+			break;
+		case "RIGHT": moveRight(toMove);
+			break;
+		case "LEFT":  moveLeft(toMove);
+			break;
+		}
+	}
+	
 	private void moveUp(Pactor p) {
 		String name = (String) p.getValueOf("NAME");
 		TileCoordinate c = pactorPositions.get(name);
@@ -225,22 +241,11 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	public boolean isWall(int row, int col) {
+	// TODO - walls are specific to Pactors.  
+	// For example, the pacman cannot pass the doorway walls of the ghost spawner, but the ghosts can. 
+	private boolean isWall(int row, int col) {
 		return row < 0 || col < 0 || row >= getRows() || col >= getCols() 
 			|| wallworld[row][col] == tileEnums.get("WALL");
-	}
-	
-	private void movePactorInDirection(Pactor toMove, String direction) {
-		switch(direction) {
-		case "UP":    moveUp(toMove);
-			break;
-		case "DOWN":  moveDown(toMove);
-			break;
-		case "RIGHT": moveRight(toMove);
-			break;
-		case "LEFT":  moveLeft(toMove);
-			break;
-		}
 	}
 	
 }

@@ -14,10 +14,6 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 		onCollision = PactorCollisionFunction.EMPTY_FUNCTION;
 	}
 	
-	void notifyCollidedWith(Pactor collidedWith) {
-		onCollision.call(collidedWith);
-	}
-	
 	public void setOnCollisionFunction(PactorCollisionFunction ON_COLLISION) {
 		onCollision = ON_COLLISION;
 	}
@@ -32,6 +28,10 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 
 	public String[] getAttributes() {
 		return attributes.getAttributes();
+	}
+	
+	void notifyCollidedWith(Pactor collidedWith) {
+		onCollision.call(collidedWith);
 	}
 
 }

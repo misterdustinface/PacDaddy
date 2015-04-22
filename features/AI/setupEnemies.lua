@@ -20,13 +20,12 @@ local function followPlayer1()
     else
         frienemy:performAction("RIGHT")
     end
-    
 end
 
 frienemy:learnAction("FOLLOW_PLAYER1", VoidFunctionPointer(followPlayer1))
 
 local function enemyTick()
-    frienemy:performAction("FOLLOW_PLAYER1")
+    -- frienemy:performAction("FOLLOW_PLAYER1")
     -- TODO
 end
 
