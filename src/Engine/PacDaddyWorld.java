@@ -149,19 +149,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return tilenamesarray;
 	}
 	
-	public void notifyPactorCollisions(Pactor p) {
-		String name = (String) p.getValueOf("NAME");
-		for (String otherName : pactors.getNames()) {
-			Pactor other = pactors.get(otherName);
-			TileCoordinate myPos = pactorPositions.get(name);
-			TileCoordinate otherPos = pactorPositions.get(otherName);
-			if (p != other && myPos.row == otherPos.row && myPos.col == otherPos.col) {
-				p.notifyCollidedWith(other);
-				other.notifyCollidedWith(p);
-			}
-		}
-	}
-	
 	private int[][] getWallWorldCopy() {
 		int[][] wallWorldCopy = new int[getRows()][];
 		for (int row = 0; row < getRows(); row++) {
@@ -176,6 +163,19 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private int getCols() {
 		return wallworld[0].length;
+	}
+	
+	private void notifyPactorCollisions(Pactor p) {
+		String name = (String) p.getValueOf("NAME");
+		for (String otherName : pactors.getNames()) {
+			Pactor other = pactors.get(otherName);
+			TileCoordinate myPos = pactorPositions.get(name);
+			TileCoordinate otherPos = pactorPositions.get(otherName);
+			if (p != other && myPos.row == otherPos.row && myPos.col == otherPos.col) {
+				p.notifyCollidedWith(other);
+				other.notifyCollidedWith(p);
+			}
+		}
 	}
 	
 	private void updatePactor(Pactor p) {
@@ -243,6 +243,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	// TODO - walls are specific to Pactors.  
 	// For example, the pacman cannot pass the doorway walls of the ghost spawner, but the ghosts can. 
+	// Therefore, isWall attributes are dependent on a given Pactor
 	private boolean isWall(int row, int col) {
 		return row < 0 || col < 0 || row >= getRows() || col >= getCols() 
 			|| wallworld[row][col] == tileEnums.get("WALL");
