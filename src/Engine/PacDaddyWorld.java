@@ -127,6 +127,14 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		pactorToTile = PACTOR_TO_TILE;
 	}
 	
+	public boolean isWall(int row, int col) {
+		return wallworld[row][col] == tileEnums.get("WALL");
+	}
+	
+	public boolean isOutOfBounds(int row, int col) {
+		return row < 0 || col < 0 || row >= getRows() || col >= getCols();
+	}
+	
 	public int[][] getTiledBoard() {
 		
 		int[][] worldRepresentation = getWallWorldCopy();
@@ -210,13 +218,5 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 			c.col = getCols() - 1;
 		}
 	}
-	
-	private boolean isWall(int row, int col) {
-		return wallworld[row][col] == tileEnums.get("WALL");
-	}
-	
-//	private boolean isOutOfWorldBounds(int row, int col) {
-//		return row < 0 || col < 0 || row >= getRows() || col >= getCols();
-//	}
 	
 }
