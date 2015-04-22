@@ -6,7 +6,6 @@ import java.util.Arrays;
 import datastructures.Queue;
 import datastructures.Table;
 import InternalInterfaces.PactorToTileFunction;
-import InternalInterfaces.PactorUpdateFunction;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 
@@ -22,7 +21,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	private GameAttributes noPactorAvailableTileAttributes;
 	private PactorToTileFunction pactorToTile;
 	final private Queue<String> removalQueue;
-	private PactorUpdateFunction pactorUpdater;
 	
 	public PacDaddyWorld() {
 		tilenames = new ArrayList<String>();
@@ -38,25 +36,19 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 				return "FLOOR";
 			}
 		};
-		pactorUpdater = new PactorUpdateFunction() {
-			public void call(Pactor toUpdate) {
-				updatePactor(toUpdate);
-			}
-		};
+
+		addTileType("FLOOR");
+		addTileType("WALL");
 	}
 	
 	public void loadFromString(String worldstring) {
 		wallworld = Utilities.StringToIntArray(worldstring);
 	}
 	
-	public void setPactorUpdateFunction(PactorUpdateFunction UPDATE_FUNC) {
-		pactorUpdater = UPDATE_FUNC;
-	}
-	
 	public void tick() {
 		for (String name : pactors.getNames()) {
 			Pactor p = getPactor(name);
-			pactorUpdater.call(p);
+			updatePactor(p);
 		}
 		clearRemovalQueue();
 	}
@@ -169,6 +161,29 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return wallworld[0].length;
 	}
 	
+	private void updatePactor(Pactor p) {
+		String direction = (String) p.getValueOf("REQUESTED_DIRECTION");
+		movePactorInDirection(p, direction);
+		notifyPactorCollisions(p);
+	}
+	
+	private void movePactorInDirection(Pactor toMove, String direction) {
+		String name = (String) toMove.getValueOf("NAME");
+		TileCoordinate c = pactorPositions.get(name);
+		TileCoordinate next = new TileCoordinate();
+		next.row = direction == "UP"   ? (c.row - 1) : direction == "DOWN"  ? (c.row + 1) : c.row;
+		next.col = direction == "LEFT" ? (c.col - 1) : direction == "RIGHT" ? (c.col + 1) : c.col;
+		wrapToWorldBounds(next);
+		
+		if (!isWall(next.row, next.col)) {
+			c.row = next.row;
+			c.col = next.col;
+			toMove.setAttribute("DIRECTION", direction);
+		} else if (toMove.getValueOf("DIRECTION") != direction) {
+			movePactorInDirection(toMove, (String) toMove.getValueOf("DIRECTION"));
+		}
+	}
+	
 	private void notifyPactorCollisions(Pactor p) {
 		String name = (String) p.getValueOf("NAME");
 		for (String otherName : pactors.getNames()) {
@@ -182,75 +197,26 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	private void updatePactor(Pactor p) {
-		String direction = (String) p.getValueOf("REQUESTED_DIRECTION");
-		movePactorInDirection(p, direction);
-		notifyPactorCollisions(p);
-	}
-	
-	private void movePactorInDirection(Pactor toMove, String direction) {
-		switch(direction) {
-		case "UP":    moveUp(toMove);
-			break;
-		case "DOWN":  moveDown(toMove);
-			break;
-		case "RIGHT": moveRight(toMove);
-			break;
-		case "LEFT":  moveLeft(toMove);
-			break;
+	private void wrapToWorldBounds(TileCoordinate c) {
+		if (c.row >= getRows()) {
+			c.row = 0;
+		} else if (c.row < 0) {
+			c.row = getRows() - 1;
+		}
+		
+		if (c.col >= getCols()) {
+			c.col = 0;
+		} else if (c.col < 0) {
+			c.col = getCols() - 1;
 		}
 	}
 	
-	private void moveUp(Pactor p) {
-		String name = (String) p.getValueOf("NAME");
-		TileCoordinate c = pactorPositions.get(name);
-		if (!isWall(c.row - 1, c.col)) {
-			--c.row;
-			p.setAttribute("DIRECTION", "UP");
-		} else if (p.getValueOf("DIRECTION") != "UP") {
-			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
-		}
-	}
-	
-	private void moveDown(Pactor p) {
-		String name = (String) p.getValueOf("NAME");
-		TileCoordinate c = pactorPositions.get(name);
-		if (!isWall(c.row + 1, c.col)) {
-			++c.row;
-			p.setAttribute("DIRECTION", "DOWN");
-		} else if (p.getValueOf("DIRECTION") != "DOWN") {
-			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
-		}
-	}
-	
-	private void moveLeft(Pactor p) {
-		String name = (String) p.getValueOf("NAME");
-		TileCoordinate c = pactorPositions.get(name);
-		if (!isWall(c.row, c.col - 1)) {
-			--c.col;
-			p.setAttribute("DIRECTION", "LEFT");
-		} else if (p.getValueOf("DIRECTION") != "LEFT") {
-			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
-		}
-	}
-	
-	private void moveRight(Pactor p) {
-		String name = (String) p.getValueOf("NAME");
-		TileCoordinate c = pactorPositions.get(name);
-		if (!isWall(c.row, c.col + 1)) {
-			++c.col;
-			p.setAttribute("DIRECTION", "RIGHT");
-		} else if (p.getValueOf("DIRECTION") != "RIGHT") {
-			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
-		}
-	}
-	
-	// TODO - walls are specific to Pactors.  
-	// For example, the pacman cannot pass the doorway walls of the ghost spawner, but the ghosts can. 
-	// Therefore, isWall attributes are dependent on a given Pactor
 	private boolean isWall(int row, int col) {
-		return row < 0 || col < 0 || row >= getRows() || col >= getCols() 
-			|| wallworld[row][col] == tileEnums.get("WALL");
+		return wallworld[row][col] == tileEnums.get("WALL");
 	}
+	
+//	private boolean isOutOfWorldBounds(int row, int col) {
+//		return row < 0 || col < 0 || row >= getRows() || col >= getCols();
+//	}
 	
 }
