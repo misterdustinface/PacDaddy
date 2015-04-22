@@ -5,6 +5,7 @@ local world = GAME:getModifiableWorld()
 local frienemy = require("PacDaddyGameWrapper/Enemy")
 world:addPactor("FRIENEMY", frienemy)
 world:setPactorSpawn("FRIENEMY", 5, 6)
+world:setPactorSpeed("FRIENEMY", 0.5)
 world:respawnPactor("FRIENEMY")
 
 local function followPlayer1()
@@ -25,7 +26,7 @@ end
 frienemy:learnAction("FOLLOW_PLAYER1", VoidFunctionPointer(followPlayer1))
 
 local function enemyTick()
-    -- frienemy:performAction("FOLLOW_PLAYER1")
+    frienemy:performAction("FOLLOW_PLAYER1")
     -- TODO
 end
 

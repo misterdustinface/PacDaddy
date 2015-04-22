@@ -14,20 +14,21 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	private String[] tilenamesarray;
 	final private ArrayList<String> tilenames;
 	final private Table<Integer> tileEnums;
-	final private Table<Pactor> pactors;
-	final private Table<TileCoordinate> pactorPositions;
-	final private Table<TileCoordinate> pactorSpawns;
-	private int[][] wallworld;
+	
+	final private Table<Pactor> pactors;	
+	final private Table<GameAttributes> worldPactorAttributes;
 	private GameAttributes noPactorAvailableTileAttributes;
+	
 	private PactorToTileFunction pactorToTile;
+	private int[][] wallworld;
+	
 	final private Queue<String> removalQueue;
 	
 	public PacDaddyWorld() {
+		worldPactorAttributes = new Table<GameAttributes>();
 		tilenames = new ArrayList<String>();
 		tileEnums = new Table<Integer>();
 		pactors = new Table<Pactor>();
-		pactorPositions = new Table<TileCoordinate>();
-		pactorSpawns = new Table<TileCoordinate>();
 		noPactorAvailableTileAttributes = new GameAttributes();
 		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
 		removalQueue = new Queue<String>();
@@ -47,8 +48,13 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public void tick() {
 		for (String name : pactors.getNames()) {
-			Pactor p = getPactor(name);
-			updatePactor(p);
+			GameAttributes g = worldPactorAttributes.get(name);
+			g.setAttribute("TICK_COUNTER", (int)g.getValueOf("TICK_COUNTER") + 1);
+			if ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE")) {
+				Pactor p = getPactor(name);
+				updatePactor(p);
+				g.setAttribute("TICK_COUNTER", 0);
+			}
 		}
 		clearRemovalQueue();
 	}
@@ -57,16 +63,20 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		while (!removalQueue.isEmpty()) {
 			String toRemove = removalQueue.dequeue();
 			pactors.remove(toRemove);
-			pactorPositions.remove(toRemove);
-			pactorSpawns.remove(toRemove);
+			worldPactorAttributes.remove(toRemove);
 		}
 	}
 	
 	final public void addPactor(String name, Pactor p) {
 		p.setAttribute("NAME", name);
-		pactorSpawns.insert(name, new TileCoordinate());
-		pactorPositions.insert(name, new TileCoordinate());
+		GameAttributes g = new GameAttributes();
+		g.setAttribute("SPAWN", new TileCoordinate());
+		g.setAttribute("POSITION", new TileCoordinate());
+		g.setAttribute("SPEED__PCT", 1.0f);
+		g.setAttribute("TICKS_TO_MOVE", 1);
+		g.setAttribute("TICK_COUNTER", 0);
 		pactors.insert(name, p);
+		worldPactorAttributes.insert(name, g);
 	}
 	
 	final public void removePactor(String name) {
@@ -78,22 +88,22 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	final public int getRowOf(String name) {
-		return pactorPositions.get(name).row;
+		return getPositionFor(name).row;
 	}
 	
 	final public int getColOf(String name) {
-		return pactorPositions.get(name).col;
+		return  getPositionFor(name).col;
 	}
 	
 	final public void setPactorSpawn(String name, int row, int col) {
-		TileCoordinate spawn = pactorSpawns.get(name);
+		TileCoordinate spawn = getSpawnFor(name);
 		spawn.row = row;
 		spawn.col = col;
 	}
 	
 	final public void respawnPactor(String name) {
-		TileCoordinate c = pactorPositions.get(name);
-		TileCoordinate spawn = pactorSpawns.get(name);
+		TileCoordinate c = getPositionFor(name);
+		TileCoordinate spawn = getSpawnFor(name);
 		c.row = spawn.row;
 		c.col = spawn.col;
 	}
@@ -104,9 +114,14 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
+	final public void setPactorSpeed(String name, float percent) {
+		worldPactorAttributes.get(name).setAttribute("SPEED__PCT", percent);
+		worldPactorAttributes.get(name).setAttribute("TICKS_TO_MOVE", (int)(100 / (100 * percent)) );
+	}
+	
 	public PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
 		for (String name : pactors.getNames()) {
-			TileCoordinate c = pactorPositions.get(name);
+			TileCoordinate c = getPositionFor(name);
 			if (c.row == row && c.col == col) {
 				return pactors.get(name);
 			}
@@ -142,7 +157,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
 			String s = pactorToTile.getTileName(p);
-			TileCoordinate c = pactorPositions.get(name);
+			TileCoordinate c = getPositionFor(name);
 			worldRepresentation[c.row][c.col] = tileEnums.get(s);
 		}
 		
@@ -177,7 +192,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private void movePactorInDirection(Pactor toMove, String direction) {
 		String name = (String) toMove.getValueOf("NAME");
-		TileCoordinate c = pactorPositions.get(name);
+		TileCoordinate c = getPositionFor(name);
 		TileCoordinate next = new TileCoordinate();
 		next.row = direction == "UP"   ? (c.row - 1) : direction == "DOWN"  ? (c.row + 1) : c.row;
 		next.col = direction == "LEFT" ? (c.col - 1) : direction == "RIGHT" ? (c.col + 1) : c.col;
@@ -196,8 +211,8 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		String name = (String) p.getValueOf("NAME");
 		for (String otherName : pactors.getNames()) {
 			Pactor other = pactors.get(otherName);
-			TileCoordinate myPos = pactorPositions.get(name);
-			TileCoordinate otherPos = pactorPositions.get(otherName);
+			TileCoordinate myPos = getPositionFor(name);
+			TileCoordinate otherPos = getPositionFor(otherName);
 			if (p != other && myPos.row == otherPos.row && myPos.col == otherPos.col) {
 				p.notifyCollidedWith(other);
 				other.notifyCollidedWith(p);
@@ -217,6 +232,14 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		} else if (c.col < 0) {
 			c.col = getCols() - 1;
 		}
+	}
+	
+	private TileCoordinate getSpawnFor(String name) {
+		return (TileCoordinate) worldPactorAttributes.get(name).getValueOf("SPAWN");
+	}
+	
+	private TileCoordinate getPositionFor(String name) {
+		return (TileCoordinate) worldPactorAttributes.get(name).getValueOf("POSITION");
 	}
 	
 }
