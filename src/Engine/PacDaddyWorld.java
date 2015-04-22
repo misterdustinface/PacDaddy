@@ -32,8 +32,12 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		pactorSpawns = new Table<TileCoordinate>();
 		noPactorAvailableTileAttributes = new GameAttributes();
 		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
-		pactorToTile = PactorToTileFunction.EMPTY_FUNCTION;
 		removalQueue = new Queue<String>();
+		pactorToTile = new PactorToTileFunction() {
+			public String getTileName(Pactor pactor) {
+				return "FLOOR";
+			}
+		};
 		pactorUpdater = new PactorUpdateFunction() {
 			public void call(Pactor toUpdate) {
 				updatePactor(toUpdate);
