@@ -8,12 +8,8 @@ world:setPactorSpawn("FRIENEMY", 5, 6)
 world:respawnPactor("FRIENEMY")
 
 local function followPlayer1()
-    local player1Pos = {}
-    local myPos      = {}
-    player1Pos.row   = world:getPactorRow("PLAYER1")
-    player1Pos.col   = world:getPactorCol("PLAYER1")
-    myPos.row        = world:getPactorRow("FRIENEMY")
-    myPos.col        = world:getPactorCol("FRIENEMY")
+    local player1Pos = { row = world:getRowOf("PLAYER1"),  col = world:getColOf("PLAYER1") }
+    local myPos      = { row = world:getRowOf("FRIENEMY"), col = world:getColOf("FRIENEMY") }
     
     if player1Pos.row < myPos.row then
         frienemy:performAction("UP")

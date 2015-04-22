@@ -36,49 +36,41 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 		return attributes.getAttributes();
 	}
 	
+	private void requestDirection(String request) {
+		if (getValueOf("DIRECTION") != request) {
+			setAttribute("REQUESTED_DIRECTION", request);
+		}
+	}
+	
 	private void learnBasics() {
-		learnAction("NONE", new VoidFunctionPointer() {
-			public void call() {
-				setAttribute("REQUESTED_DIRECTION", "NONE");
-				setAttribute("DIRECTION", "NONE");
-			}
-		});
+		setAttribute("DIRECTION", "NONE");
+		setAttribute("REQUESTED_DIRECTION", "NONE");
+		
 		learnAction("UP", new VoidFunctionPointer() {
 			public void call() {
-				if (getValueOf("DIRECTION") != "UP") {
-					setAttribute("REQUESTED_DIRECTION", "UP");
-				}
+				requestDirection("UP");
 			}
 		});
 		learnAction("DOWN", new VoidFunctionPointer() {
 			public void call() {
-				if (getValueOf("DIRECTION") != "DOWN") {
-					setAttribute("REQUESTED_DIRECTION", "DOWN");
-				}
+				requestDirection("DOWN");
 			}
 		});
 		learnAction("RIGHT", new VoidFunctionPointer() {
 			public void call() {
-				if (getValueOf("DIRECTION") != "RIGHT") {
-					setAttribute("REQUESTED_DIRECTION", "RIGHT");
-				}
+				requestDirection("RIGHT");
 			}
 		});
 		learnAction("LEFT", new VoidFunctionPointer() {
 			public void call() {
-				if (getValueOf("DIRECTION") != "LEFT") {
-					setAttribute("REQUESTED_DIRECTION", "LEFT");
-				}
+				requestDirection("LEFT");
 			}
 		});
-		learnAction("STOP", new VoidFunctionPointer() {
+		learnAction("NONE", new VoidFunctionPointer() {
 			public void call() {
-				setAttribute("REQUESTED_DIRECTION", "NONE");
-				setAttribute("DIRECTION", "NONE");
+				
 			}
 		});
-		
-		performAction("NONE");
 	}
 
 }

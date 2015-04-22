@@ -71,19 +71,19 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return pactors.get(name);
 	}
 	
-	final public int getPactorRow(Pactor p) {
-		return getPactorRow((String) p.getValueOf("NAME"));
+	final public int getRowOf(Pactor p) {
+		return getRowOf((String) p.getValueOf("NAME"));
 	}
 	
-	final public int getPactorCol(Pactor p) {
-		return getPactorCol((String) p.getValueOf("NAME"));
+	final public int getColOf(Pactor p) {
+		return getColOf((String) p.getValueOf("NAME"));
 	}
 	
-	final public int getPactorRow(String name) {
+	final public int getRowOf(String name) {
 		return pactorPositions.get(name).row;
 	}
 	
-	final public int getPactorCol(String name) {
+	final public int getColOf(String name) {
 		return pactorPositions.get(name).col;
 	}
 	
