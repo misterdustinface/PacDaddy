@@ -1,8 +1,8 @@
 return {
   "Attributes",
   "Level",
+  "AI",
   "Controls",
   "Controllers",
-  "AI",
   "AWT",
 }

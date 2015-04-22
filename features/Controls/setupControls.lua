@@ -56,7 +56,6 @@ local function reloadFeatures()
     loadFeatures("features/Controls")
     loadFeatures("features/Controllers")
     loadFeatures("features/AI")
-    loadFeatures("tests")
     GAME:sendCommand("PLAY")
 end
 
