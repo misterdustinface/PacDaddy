@@ -16,7 +16,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	final private Table<Pactor> pactors;
 	final private Table<TileCoordinate> pactorPositions;
 	final private Table<TileCoordinate> pactorSpawns;
-	final private Table<String>			currentDirection;
 	private int[][] wallworld;
 	private GameAttributes noPactorAvailableTileAttributes;
 	private PactorToTileFunction pactorToTile;
@@ -27,7 +26,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		pactors = new Table<Pactor>();
 		pactorPositions = new Table<TileCoordinate>();
 		pactorSpawns = new Table<TileCoordinate>();
-		currentDirection = new Table<String>();
 		noPactorAvailableTileAttributes = new GameAttributes();
 		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
 		pactorToTile = PactorToTileFunction.EMPTY_FUNCTION;
@@ -41,7 +39,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	public void tick() {
 		for (String name : pactors.getNames()) {
 			Pactor toMove = getPactor(name);
-			String direction = (String) toMove.getValueOf("DIRECTION");
+			String direction = (String) toMove.getValueOf("REQUESTED_DIRECTION");
 			movePactorInDirection(toMove, direction);
 			checkPactorCollisionsWithPactor(toMove);
 		}
@@ -55,7 +53,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 			pactors.remove(toRemove);
 			pactorPositions.remove(toRemove);
 			pactorSpawns.remove(toRemove);
-			currentDirection.remove(toRemove);
 		}
 	}
 	
@@ -64,7 +61,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		pactorSpawns.insert(name, new TileCoordinate());
 		pactorPositions.insert(name, new TileCoordinate());
 		pactors.insert(name, p);
-		currentDirection.insert(name, (String) p.getValueOf("DIRECTION"));
 	}
 	
 	final public void removePactor(String name) {
@@ -154,9 +150,9 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		TileCoordinate c = pactorPositions.get(name);
 		if (!isWall(c.row - 1, c.col)) {
 			--c.row;
-			currentDirection.insert(name, "UP");
-		} else if (currentDirection.get(name) != "UP") {
-			movePactorInDirection(p, currentDirection.get(name));
+			p.setAttribute("DIRECTION", "UP");
+		} else if (p.getValueOf("DIRECTION") != "UP") {
+			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
 		}
 	}
 	
@@ -165,9 +161,9 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		TileCoordinate c = pactorPositions.get(name);
 		if (!isWall(c.row + 1, c.col)) {
 			++c.row;
-			currentDirection.insert(name, "DOWN");
-		} else if (currentDirection.get(name) != "DOWN") {
-			movePactorInDirection(p, currentDirection.get(name));
+			p.setAttribute("DIRECTION", "DOWN");
+		} else if (p.getValueOf("DIRECTION") != "DOWN") {
+			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
 		}
 	}
 	
@@ -176,9 +172,9 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		TileCoordinate c = pactorPositions.get(name);
 		if (!isWall(c.row, c.col - 1)) {
 			--c.col;
-			currentDirection.insert(name, "LEFT");
-		} else if (currentDirection.get(name) != "LEFT") {
-			movePactorInDirection(p, currentDirection.get(name));
+			p.setAttribute("DIRECTION", "LEFT");
+		} else if (p.getValueOf("DIRECTION") != "LEFT") {
+			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
 		}
 	}
 	
@@ -187,9 +183,9 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		TileCoordinate c = pactorPositions.get(name);
 		if (!isWall(c.row, c.col + 1)) {
 			++c.col;
-			currentDirection.insert(name, "RIGHT");
-		} else if (currentDirection.get(name) != "RIGHT") {
-			movePactorInDirection(p, currentDirection.get(name));
+			p.setAttribute("DIRECTION", "RIGHT");
+		} else if (p.getValueOf("DIRECTION") != "RIGHT") {
+			movePactorInDirection(p, (String) p.getValueOf("DIRECTION"));
 		}
 	}
 	

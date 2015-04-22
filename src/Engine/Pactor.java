@@ -39,31 +39,41 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 	private void learnBasics() {
 		learnAction("NONE", new VoidFunctionPointer() {
 			public void call() {
+				setAttribute("REQUESTED_DIRECTION", "NONE");
 				setAttribute("DIRECTION", "NONE");
 			}
 		});
 		learnAction("UP", new VoidFunctionPointer() {
 			public void call() {
-				setAttribute("DIRECTION", "UP");
+				if (getValueOf("DIRECTION") != "UP") {
+					setAttribute("REQUESTED_DIRECTION", "UP");
+				}
 			}
 		});
 		learnAction("DOWN", new VoidFunctionPointer() {
 			public void call() {
-				setAttribute("DIRECTION", "DOWN");
+				if (getValueOf("DIRECTION") != "DOWN") {
+					setAttribute("REQUESTED_DIRECTION", "DOWN");
+				}
 			}
 		});
 		learnAction("RIGHT", new VoidFunctionPointer() {
 			public void call() {
-				setAttribute("DIRECTION", "RIGHT");
+				if (getValueOf("DIRECTION") != "RIGHT") {
+					setAttribute("REQUESTED_DIRECTION", "RIGHT");
+				}
 			}
 		});
 		learnAction("LEFT", new VoidFunctionPointer() {
 			public void call() {
-				setAttribute("DIRECTION", "LEFT");
+				if (getValueOf("DIRECTION") != "LEFT") {
+					setAttribute("REQUESTED_DIRECTION", "LEFT");
+				}
 			}
 		});
 		learnAction("STOP", new VoidFunctionPointer() {
 			public void call() {
+				setAttribute("REQUESTED_DIRECTION", "NONE");
 				setAttribute("DIRECTION", "NONE");
 			}
 		});
