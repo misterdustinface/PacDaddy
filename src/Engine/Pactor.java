@@ -3,7 +3,6 @@ package Engine;
 import InternalInterfaces.AttributeSetter;
 import InternalInterfaces.PactorCollisionFunction;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
-import functionpointers.VoidFunctionPointer;
 
 public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeSetter {
 
@@ -13,7 +12,6 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 	public Pactor() {
 		attributes = new GameAttributes();
 		onCollision = PactorCollisionFunction.EMPTY_FUNCTION;
-		learnBasics();
 	}
 	
 	void notifyCollidedWith(Pactor collidedWith) {
@@ -34,43 +32,6 @@ public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeS
 
 	public String[] getAttributes() {
 		return attributes.getAttributes();
-	}
-	
-	private void requestDirection(String request) {
-		if (getValueOf("DIRECTION") != request) {
-			setAttribute("REQUESTED_DIRECTION", request);
-		}
-	}
-	
-	private void learnBasics() {
-		setAttribute("DIRECTION", "NONE");
-		setAttribute("REQUESTED_DIRECTION", "NONE");
-		
-		learnAction("UP", new VoidFunctionPointer() {
-			public void call() {
-				requestDirection("UP");
-			}
-		});
-		learnAction("DOWN", new VoidFunctionPointer() {
-			public void call() {
-				requestDirection("DOWN");
-			}
-		});
-		learnAction("RIGHT", new VoidFunctionPointer() {
-			public void call() {
-				requestDirection("RIGHT");
-			}
-		});
-		learnAction("LEFT", new VoidFunctionPointer() {
-			public void call() {
-				requestDirection("LEFT");
-			}
-		});
-		learnAction("NONE", new VoidFunctionPointer() {
-			public void call() {
-				
-			}
-		});
 	}
 
 }
