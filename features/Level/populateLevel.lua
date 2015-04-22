@@ -2,7 +2,7 @@ local world = GAME:getModifiableWorld()
 
 local player = require("PacDaddyGameWrapper/Player")
 world:addPactor("PLAYER1", player)
-world:setPactorSpawn("PLAYER1", 8, 6)
+world:setPactorSpawn("PLAYER1", 17, 14)
 world:respawnPactor("PLAYER1")
 
 local pickup = require("PacDaddyGameWrapper/Pickup")
