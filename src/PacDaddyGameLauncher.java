@@ -4,7 +4,7 @@ import Engine.PacDaddyGame;
 import FeatureLoader.FeatureLoader;
 import PacDaddyApplicationInterfaces.PacDaddyApplication;
 
-public class PacDaddyGameLauncher {
+final public class PacDaddyGameLauncher {
 
 	final protected FeatureLoader loader;
 	
