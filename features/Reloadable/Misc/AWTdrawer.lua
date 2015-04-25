@@ -32,9 +32,8 @@ local function getTileColor(tilename)
     return color
 end
 
-local function drawGame()
+local function drawBoard(board)
     local tilenames = GAME:getTileNames()
-    local board = GAME:getTiledBoard()
     local TILEWIDTH = (DISPLAY:getWidth() - 2*borderWidth)/ board[1].length
     local TILEHEIGHT = (DISPLAY:getHeight() - 2*borderHeight) / board.length
     local g = DISPLAY:getGraphics()
@@ -46,6 +45,9 @@ local function drawGame()
             if tileEnum ~= previousTileEnum or TILEWIDTH ~= previousTileWidth or TILEHEIGHT ~= previousTileHeight then
                 local tileName = tilenames[tileEnum+1]
                 local tileColor = getTileColor(tileName)
+            
+                g:setColor(getTileColor("FLOOR"))
+                g:fillRect((col-1) * TILEWIDTH + borderWidth, (row-1) * TILEHEIGHT + borderHeight, TILEWIDTH, TILEHEIGHT)
                 g:setColor(tileColor)
             
                 if tileName == "PICKUP" then
@@ -64,7 +66,11 @@ local function drawGame()
     previousBoard = board
     previousTileWidth = TILEWIDTH
     previousTileHeight = TILEHEIGHT
-    
+end
+
+local function drawInfo()
+    local g = DISPLAY:getGraphics()
+
     g:setColor(Color.BLACK)
     g:fillRect(0, 0, DISPLAY:getWidth(), borderHeight)
     g:fillRect(0, 0, borderWidth, DISPLAY:getHeight())
@@ -81,6 +87,12 @@ local function drawGame()
     
     g:setColor(Color.WHITE)
     g:drawString("SCORE " .. GAME:getValueOf("SCORE"), 140, 20)
+end
+
+local function drawGame()
+    local okAccess, board = pcall(GAME.getTiledBoard, GAME)
+    if okAccess then drawBoard(board) end
+    drawInfo()
 end
 
 DRAWGAME = drawGame

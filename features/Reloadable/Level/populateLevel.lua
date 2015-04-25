@@ -31,6 +31,11 @@ world:addPactor("PICKUP2", pickup2)
 world:setPactorSpawn("PICKUP2", 4, 12)
 world:respawnPactor("PICKUP2")
 
+local pickup3 = PointsPickup:new()
+world:addPactor("PICKUP3", pickup3)
+world:setPactorSpawn("PICKUP3", 5, 12)
+world:respawnPactor("PICKUP3")
+
 --local tilenames = GAME:getTileNames()
 --local board = GAME:getTiledBoard()
 --local Pickup = require("PacDaddyGameWrapper/PointsPickup")

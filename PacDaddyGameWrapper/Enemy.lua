@@ -12,7 +12,8 @@ local function new()
       ["UP"] = "DOWN",
       ["DOWN"] = "UP",
       ["LEFT"] = "RIGHT",
-      ["RIGHT"] = "LEFT"
+      ["RIGHT"] = "LEFT",
+      ["NONE"] = "NONE",
     }
     
     local function onPactorCollision(otherPactorAttributes)

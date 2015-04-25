@@ -2,27 +2,24 @@ package Engine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
+import InternalInterfaces.PactorToTileFunction;
+import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
+import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import datastructures.Queue;
 import datastructures.Table;
-import InternalInterfaces.PactorToTileFunction;
-import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
-import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 
 public class PacDaddyWorld implements PacDaddyBoardReader {
 
-	private String[] tilenamesarray;
-	final private ArrayList<String> tilenames;
-	final private Table<Integer> tileEnums;
+	volatile private String[] tilenamesarray;
+	volatile private ArrayList<String> tilenames;
+	volatile private Table<Integer> tileEnums;
+	volatile private Table<Pactor> pactors;	
+	volatile private Table<GameAttributes> worldPactorAttributes;
 	
-	final private Table<Pactor> pactors;	
-	final private Table<GameAttributes> worldPactorAttributes;
 	private GameAttributes noPactorAvailableTileAttributes;
-	
 	private PactorToTileFunction pactorToTile;
 	private int[][] wallworld;
-	
 	final private Queue<String> removalQueue;
 	
 	public PacDaddyWorld() {
@@ -179,10 +176,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		
 		int[][] worldRepresentation = getWallWorldCopy();
 		
-		Set<String> names = pactors.getNames();
-		String[] namesAr = names.toArray(new String[]{});
-		
-		for (String name : namesAr) {
+		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
 			String s = pactorToTile.getTileName(p);
 			TileCoordinate c = getPositionFor(name);
