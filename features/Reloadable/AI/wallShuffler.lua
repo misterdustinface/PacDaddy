@@ -1,5 +1,3 @@
-require("luasrc/VoidFunctionPointer")
-local mainLoop = GAME:getModifiableGameLoop()
 local world = GAME:getModifiableWorld()
 
 math.randomseed(os.time())
@@ -29,4 +27,4 @@ local function shuffleWalls()
     end
 end
 
-mainLoop:addFunction(VoidFunctionPointer(shuffleWalls))
+WALL_SHUFFLE_TICK = shuffleWalls

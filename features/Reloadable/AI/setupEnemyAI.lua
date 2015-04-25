@@ -1,5 +1,3 @@
-require("luasrc/VoidFunctionPointer")
-local mainLoop = GAME:getModifiableGameLoop()
 local world = GAME:getModifiableWorld()
 
 local frienemy = world:getPactor("FRIENEMY")
@@ -26,4 +24,4 @@ local function enemyTick()
     -- TODO
 end
 
-mainLoop:addFunction(VoidFunctionPointer(enemyTick))
+AI_TICK = enemyTick

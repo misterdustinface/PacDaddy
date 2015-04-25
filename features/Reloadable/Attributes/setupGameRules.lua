@@ -1,6 +1,4 @@
-require("luasrc/VoidFunctionPointer")
 local gameAttributes = GAME:getModifiableAttributes()
-local mainLoop = GAME:getModifiableGameLoop()
 
 local function gameRules()
     if GAME:getValueOf("LIVES") == 0 then
@@ -14,4 +12,4 @@ local function gameRules()
     end
 end
 
-mainLoop:addFunction(VoidFunctionPointer(gameRules))
+GAME_RULES_TICK = gameRules
