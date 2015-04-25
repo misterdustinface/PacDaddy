@@ -2,6 +2,7 @@ package FeatureLoader;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 public class FeatureLoader {
@@ -14,12 +15,25 @@ public class FeatureLoader {
 		loadLuaFeatureLoaderFunctionsToGlobalFunctions();
 	}
 	
+	public void setApplication(Object app) {
+		LuaValue function = globals.get("setApplication");
+		function.call(CoerceJavaToLua.coerce(app));
+	}
+	
+	public Object getApplication() {
+		return getGlobalUserObject("APPLICATION");
+	}
+	
 	public void loadFeatures(String featuresFolder) {
 		callFunctionWithArgument("loadFeatures", featuresFolder);
 	}
 	
 	public void displayLoadedFiles() {
 		callFunction("displayLoadedFiles");
+	}
+	
+	public Object getGlobalUserObject(String name) {
+		return globals.get(name).touserdata();
 	}
 	
 	private void callFunction(String functionname) {

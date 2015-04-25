@@ -1,6 +1,8 @@
 
 
+import Engine.PacDaddyGame;
 import FeatureLoader.FeatureLoader;
+import PacDaddyApplicationInterfaces.PacDaddyApplication;
 
 public class PacDaddyGameLauncher {
 
@@ -8,12 +10,17 @@ public class PacDaddyGameLauncher {
 	
 	public PacDaddyGameLauncher() {
 		loader = new FeatureLoader();
-		loader.loadFeatures("wrapPacDaddyGame");
+		loader.setApplication(new PacDaddyGame());
 		loader.loadFeatures("features");
+		getApplication().getInputProcessor().sendCommand("PLAY");
 	}
 	
 	public static void main(String[] args) {
 		new PacDaddyGameLauncher();
+	}
+	
+	public PacDaddyApplication getApplication() {
+		return (PacDaddyApplication) loader.getApplication();
 	}
 	
 }

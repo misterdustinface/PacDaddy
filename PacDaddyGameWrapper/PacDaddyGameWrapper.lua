@@ -1,6 +1,6 @@
 local public = {}
 
-local game = require("PacDaddyGameWrapper/PacDaddyGameSingleton")
+local game = APPLICATION
 
 local function addComponentToGame(this, name, implementation)
     game:addComponent(name, implementation)

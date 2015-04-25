@@ -82,3 +82,9 @@ end
 function displayLoadedFiles()
     DISPLAY_LOADED_FILES = true
 end
+
+function setApplication(appObject)
+    if APPLICATION == nil then
+        APPLICATION = appObject
+    end
+end
