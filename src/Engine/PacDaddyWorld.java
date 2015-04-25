@@ -91,6 +91,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		g.setAttribute("SPAWN", new TileCoordinate());
 		g.setAttribute("POSITION", new TileCoordinate());
 		g.setAttribute("TICK_COUNTER", 0);
+		g.setAttribute("TICKS_TO_MOVE", 0);
 		pactors.insert(name, p);
 		worldPactorAttributes.insert(name, g);
 	}
