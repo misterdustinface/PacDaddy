@@ -1,0 +1,1 @@
+GAME = require("PacDaddyGameWrapper/PacDaddyGameWrapper")

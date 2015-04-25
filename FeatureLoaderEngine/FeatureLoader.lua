@@ -79,10 +79,6 @@ function loadFeatures(featuresFolderFilePath)
     end
 end
 
-function setGamePath(gameWrapperFilePath)
-    GAME = require(gameWrapperFilePath)
-end
-
 function displayLoadedFiles()
     DISPLAY_LOADED_FILES = true
 end

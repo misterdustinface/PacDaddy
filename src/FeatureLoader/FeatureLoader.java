@@ -14,10 +14,6 @@ public class FeatureLoader {
 		loadLuaFeatureLoaderFunctionsToGlobalFunctions();
 	}
 	
-	public void setGamePath(String path) {
-		callFunctionWithArgument("setGamePath", path);
-	}
-	
 	public void loadFeatures(String featuresFolder) {
 		callFunctionWithArgument("loadFeatures", featuresFolder);
 	}

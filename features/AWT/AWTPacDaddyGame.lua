@@ -54,14 +54,17 @@ local function getPreviousTileEnum(row, col)
     end
 end
 
+local borderHeight = 40
+local borderWidth  = 40
+
 local previousTileWidth  = 0
 local previousTileHeight = 0
 
 local function drawGame()
     local tilenames = GAME:getTileNames()
     local board = GAME:getTiledBoard()
-    local TILEWIDTH = DISPLAY:getWidth() / board[1].length
-    local TILEHEIGHT = DISPLAY:getHeight() / board.length
+    local TILEWIDTH = (DISPLAY:getWidth() - 2*borderWidth)/ board[1].length
+    local TILEHEIGHT = (DISPLAY:getHeight() - 2*borderHeight) / board.length
     local g = DISPLAY:getGraphics()
     
     for row = 1, board.length do
@@ -72,7 +75,7 @@ local function drawGame()
                 local tileName = tilenames[tileEnum+1]
                 local tileColor = getTileColor(tileName)
                 g:setColor(tileColor)
-                g:fillRect((col-1) * TILEWIDTH, (row-1) * TILEHEIGHT, TILEWIDTH, TILEHEIGHT)
+                g:fillRect((col-1) * TILEWIDTH + borderWidth, (row-1) * TILEHEIGHT + borderHeight, TILEWIDTH, TILEHEIGHT)
             end
         end
     end
@@ -80,6 +83,12 @@ local function drawGame()
     previousBoard = board
     previousTileWidth = TILEWIDTH
     previousTileHeight = TILEHEIGHT
+    
+    g:setColor(Color.BLACK)
+    g:fillRect(0, 0, DISPLAY:getWidth(), borderHeight)
+    g:fillRect(0, 0, borderWidth, DISPLAY:getHeight())
+    g:fillRect(DISPLAY:getWidth() - borderWidth, borderHeight, borderWidth, DISPLAY:getHeight() - borderHeight)
+    g:fillRect(borderWidth, DISPLAY:getHeight() - borderHeight, DISPLAY:getWidth() - borderWidth, borderHeight)
     
     local upsStr = tif(GAME:getValueOf("IS_PAUSED"), "PAUSED", "UPS: " .. GAME:getValueOf("GAMESPEED__UPS"))
     
