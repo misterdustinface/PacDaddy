@@ -1,4 +1,3 @@
 ## PacDaddy
-
-- [Interfacing](Interfacing.md)
-- [Features](Features.md)
+## [Interfacing](Interfacing.md)
+## [Features](Features.md)
