@@ -7,3 +7,4 @@
 ### Features in Lua
   - [FeatureLoader README](https://github.com/misterdustinface/FeatureLoader/blob/master/README.md)
   - APPLICATION is a reference to the PacDaddyGame
+  - The lua file Features can access any public method of the PacDaddyGame through this APPLICATION reference
