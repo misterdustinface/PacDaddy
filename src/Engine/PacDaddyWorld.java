@@ -48,15 +48,30 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public void tick() {
 		for (String name : pactors.getNames()) {
-			GameAttributes g = worldPactorAttributes.get(name);
-			g.setAttribute("TICK_COUNTER", (int)g.getValueOf("TICK_COUNTER") + 1);
-			if ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE")) {
-				Pactor p = getPactor(name);
-				updatePactor(p);
-				g.setAttribute("TICK_COUNTER", 0);
-			}
+			tickPactor(name);
 		}
 		clearRemovalQueue();
+	}
+	
+	private void tickPactor(String name) {
+		GameAttributes g = worldPactorAttributes.get(name);
+		g.setAttribute("TICK_COUNTER", (int)g.getValueOf("TICK_COUNTER") + 1);
+		updatePactorTicksToMove(name);
+		if ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE")) {
+			g.setAttribute("TICK_COUNTER", 0);
+			Pactor p = getPactor(name);
+			updatePactor(p);
+		}
+	}
+	
+	private void updatePactorTicksToMove(String name) {
+		float speed__pct = (float) pactors.get(name).getValueOf("SPEED__PCT");
+		
+		if (speed__pct == 0) {
+			worldPactorAttributes.get(name).setAttribute("TICKS_TO_MOVE", 0);
+		} else {
+			worldPactorAttributes.get(name).setAttribute("TICKS_TO_MOVE", (int)(100 / (100 * speed__pct)) );
+		}
 	}
 	
 	private void clearRemovalQueue() {
@@ -69,11 +84,12 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	final public void addPactor(String name, Pactor p) {
 		p.setAttribute("NAME", name);
+		if (p.getValueOf("SPEED__PCT") == null) {
+			p.setAttribute("SPEED__PCT", 1.0f);
+		}
 		GameAttributes g = new GameAttributes();
 		g.setAttribute("SPAWN", new TileCoordinate());
 		g.setAttribute("POSITION", new TileCoordinate());
-		g.setAttribute("SPEED__PCT", 1.0f);
-		g.setAttribute("TICKS_TO_MOVE", 1);
 		g.setAttribute("TICK_COUNTER", 0);
 		pactors.insert(name, p);
 		worldPactorAttributes.insert(name, g);
@@ -114,9 +130,8 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	final public void setPactorSpeed(String name, float percent) {
-		worldPactorAttributes.get(name).setAttribute("SPEED__PCT", percent);
-		worldPactorAttributes.get(name).setAttribute("TICKS_TO_MOVE", (int)(100 / (100 * percent)) );
+	final public void setPactorSpeed(String name, float speed__pct) {
+		pactors.get(name).setAttribute("SPEED__PCT", speed__pct);
 	}
 	
 	public PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
