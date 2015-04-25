@@ -13,8 +13,8 @@
 
 * PacDaddyAttributeReader
   * Object getValueOf(String attributeName);
-	* String[] getAttributes();
+  * String[] getAttributes();
 
 * PacDaddyInput
   * void sendCommand(String command);
-	* String[] getCommands();
+  * String[] getCommands();
