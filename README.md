@@ -1,6 +1,10 @@
-# PacDaddy
+## PacDaddy
 
-## Interfacing
+##### Index
+0. [Interfacing](#interfacing)
+1. [Features](#features)
+
+##[Interfacing](#index)
 * PacDaddyApplication
 	* PacDaddyBoardReader getBoardReader();
 	* PacDaddyAttributeReader getGameAttributeReader();
@@ -18,3 +22,7 @@
 * PacDaddyInput
   * void sendCommand(String command);
   * String[] getCommands();
+
+
+##[Features](#index) 
+  
