@@ -51,8 +51,8 @@ local function drawBoard(board)
                 g:setColor(tileColor)
             
                 if tileName == "PICKUP" then
-                    local pickupWidth, pickupHeight = TILEWIDTH/2, TILEHEIGHT/2
-                    g:fillOval((col-1) * TILEWIDTH + borderWidth + pickupWidth/2, (row-1) * TILEHEIGHT + borderHeight + pickupHeight/2, pickupWidth, pickupHeight)
+                    local pickupWidth, pickupHeight = TILEWIDTH/4, TILEHEIGHT/4
+                    g:fillOval((col-1) * TILEWIDTH + borderWidth + TILEWIDTH/2 - pickupWidth/2, (row-1) * TILEHEIGHT + borderHeight + TILEHEIGHT/2 - pickupHeight/2, pickupWidth, pickupHeight)
                 elseif tileName == "PLAYER" then
                     g:fillOval((col-1) * TILEWIDTH + borderWidth, (row-1) * TILEHEIGHT + borderHeight, TILEWIDTH, TILEHEIGHT)
                 else
