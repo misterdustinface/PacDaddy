@@ -47,7 +47,16 @@ local function drawGame()
                 local tileName = tilenames[tileEnum+1]
                 local tileColor = getTileColor(tileName)
                 g:setColor(tileColor)
-                g:fillRect((col-1) * TILEWIDTH + borderWidth, (row-1) * TILEHEIGHT + borderHeight, TILEWIDTH, TILEHEIGHT)
+            
+                if tileName == "PICKUP" then
+                    local pickupWidth, pickupHeight = TILEWIDTH/2, TILEHEIGHT/2
+                    g:fillOval((col-1) * TILEWIDTH + borderWidth + pickupWidth/2, (row-1) * TILEHEIGHT + borderHeight + pickupHeight/2, pickupWidth, pickupHeight)
+                elseif tileName == "PLAYER" then
+                    g:fillOval((col-1) * TILEWIDTH + borderWidth, (row-1) * TILEHEIGHT + borderHeight, TILEWIDTH, TILEHEIGHT)
+                else
+                    g:fillRect((col-1) * TILEWIDTH + borderWidth, (row-1) * TILEHEIGHT + borderHeight, TILEWIDTH, TILEHEIGHT)
+                end
+                
             end
         end
     end

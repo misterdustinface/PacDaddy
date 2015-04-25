@@ -9,7 +9,9 @@ world:addTileType("PICKUP")
 world:addTileType("ENEMY")
 
 local function PACTOR_TO_TILE_STRING(p)
-    if p:getValueOf("IS_PLAYER") then
+    if not p then
+        return "FLOOR"
+    elseif p:getValueOf("IS_PLAYER") then
         return "PLAYER"
     elseif p:getValueOf("IS_ENEMY") then
         return "ENEMY"

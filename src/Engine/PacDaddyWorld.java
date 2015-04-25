@@ -2,6 +2,7 @@ package Engine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 import datastructures.Queue;
 import datastructures.Table;
@@ -177,8 +178,11 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	public int[][] getTiledBoard() {
 		
 		int[][] worldRepresentation = getWallWorldCopy();
-
-		for (String name : pactors.getNames()) {
+		
+		Set<String> names = pactors.getNames();
+		String[] namesAr = names.toArray(new String[]{});
+		
+		for (String name : namesAr) {
 			Pactor p = pactors.get(name);
 			String s = pactorToTile.getTileName(p);
 			TileCoordinate c = getPositionFor(name);
