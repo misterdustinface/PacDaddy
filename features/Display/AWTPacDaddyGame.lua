@@ -125,7 +125,6 @@ local function create()
     local drawer = makeGameDrawer()
     
     GAME:addComponent("DRAWER", drawer)
-    GAME:start()
 end
 
 create()

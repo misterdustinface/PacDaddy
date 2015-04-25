@@ -6,21 +6,24 @@ import PacDaddyApplicationInterfaces.PacDaddyApplication;
 
 final public class PacDaddyGameLauncher {
 
-	final protected FeatureLoader loader;
+	final private FeatureLoader loader;
+	final private PacDaddyGame  game;
 	
 	public PacDaddyGameLauncher() {
+		game = new PacDaddyGame();
 		loader = new FeatureLoader();
-		loader.setApplication(new PacDaddyGame());
+		loader.setApplication(game);
 		loader.loadFeatures("features");
-		getApplication().getInputProcessor().sendCommand("PLAY");
+		game.start();
+		game.getInputProcessor().sendCommand("PLAY");
+	}
+	
+	public PacDaddyApplication getApplication() {
+		return game;
 	}
 	
 	public static void main(String[] args) {
 		new PacDaddyGameLauncher();
-	}
-	
-	public PacDaddyApplication getApplication() {
-		return (PacDaddyApplication) loader.getApplication();
 	}
 	
 }
