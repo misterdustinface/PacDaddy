@@ -10,6 +10,7 @@ local function gameRules()
         --GAME:sendCommand("PAUSE")
         --GAME:quit()
     end
+    
 end
 
 GAME_RULES_TICK = gameRules

@@ -4,4 +4,5 @@ return {
   "AI",
   "Controls",
   "Controllers",
+  "Misc",
 }
