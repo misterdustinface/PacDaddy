@@ -2,11 +2,7 @@ require("luasrc/VoidFunctionPointer")
 local mainLoop = GAME:getModifiableGameLoop()
 local world = GAME:getModifiableWorld()
 
-local frienemy = require("PacDaddyGameWrapper/Enemy")
-world:addPactor("FRIENEMY", frienemy)
-world:setPactorSpawn("FRIENEMY", 14, 14)
-world:setPactorSpeed("FRIENEMY", 0.5)
-world:respawnPactor("FRIENEMY")
+local frienemy = world:getPactor("FRIENEMY")
 
 local function followPlayer1()
     local player1Pos = { row = world:getRowOf("PLAYER1"),  col = world:getColOf("PLAYER1") }
