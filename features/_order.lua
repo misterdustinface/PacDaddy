@@ -1,5 +1,0 @@
-return {
-  "Init",
-  "Reloadable",
-  "Display",
-}
