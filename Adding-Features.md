@@ -5,4 +5,5 @@
 3. The lua files in the features folder will be loaded at runtime
 
 ### Features in Lua
-  - Features can access a global lua variable named APPLICATION, which is a reference to the PacDaddyGame
+  - [FeatureLoader README](https://github.com/misterdustinface/FeatureLoader/blob/master/README.md)
+  - APPLICATION is a reference to the PacDaddyGame
