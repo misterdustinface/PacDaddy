@@ -161,7 +161,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return wallworld[0].length;
 	}
 	
-	public ArrayList<GameAttributes> getInfoForAllPactorsWithAttribute(String attribute) {
+	public GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute) {
 		ArrayList<GameAttributes> info = new ArrayList<GameAttributes>(); 
 		for (String name : pactors.getNames()) {
 			Pactor p = pactors.get(name);
@@ -170,7 +170,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 				info.add(pactorInfo);
 			}
 		}
-		return info;
+		return info.toArray(new GameAttributes[]{});
 	}
 	
 	private GameAttributes getInfoForPactor(String name) {
