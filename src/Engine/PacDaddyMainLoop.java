@@ -7,7 +7,7 @@ public class PacDaddyMainLoop extends TickingLoop {
 	
 	private PacDaddyWorld worldRef;
 	
-	public PacDaddyMainLoop() {
+	PacDaddyMainLoop() {
 		addFunction(new VoidFunctionPointer() {
 			public void call() {
 				worldRef.tick();

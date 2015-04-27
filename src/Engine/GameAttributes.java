@@ -7,7 +7,7 @@ import datastructures.Table;
 public class GameAttributes implements PacDaddyAttributeReader, AttributeSetter {
 	final private Table<Object> attributes;
 	
-	public GameAttributes() {
+	GameAttributes() {
 		attributes = new Table<Object>();
 	}
 	

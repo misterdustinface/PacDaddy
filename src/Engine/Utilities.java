@@ -5,7 +5,7 @@ final public class Utilities {
 	
 	public static int[][] StringToIntArray(String str) {
 		int numTiles = str.length();
-		final int COLS = str.indexOf('\n');
+		final int COLS = str.indexOf(System.lineSeparator());
 		final int ROWS = numTiles / COLS;
 		int[][] ar = new int[ROWS][COLS];
 		

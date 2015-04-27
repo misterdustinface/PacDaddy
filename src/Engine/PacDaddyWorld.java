@@ -1,10 +1,7 @@
 package Engine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import InternalInterfaces.PactorToTileFunction;
-import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import datastructures.Queue;
 import datastructures.Table;
@@ -16,25 +13,15 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	volatile private Table<Integer> tileEnums;
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
-	
-	private GameAttributes noPactorAvailableTileAttributes;
-	private PactorToTileFunction pactorToTile;
-	private int[][] wallworld;
-	final private Queue<String> removalQueue;
+	volatile private int[][] wallworld;
+	volatile private Queue<String> removalQueue;
 	
 	public PacDaddyWorld() {
 		worldPactorAttributes = new Table<GameAttributes>();
 		tilenames = new ArrayList<String>();
 		tileEnums = new Table<Integer>();
 		pactors = new Table<Pactor>();
-		noPactorAvailableTileAttributes = new GameAttributes();
-		noPactorAvailableTileAttributes.setAttribute("NO_PACTOR_AVAILABLE", true);
 		removalQueue = new Queue<String>();
-		pactorToTile = new PactorToTileFunction() {
-			public String getTileName(Pactor pactor) {
-				return "FLOOR";
-			}
-		};
 
 		addTileType("FLOOR");
 		addTileType("WALL");
@@ -133,16 +120,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		pactors.get(name).setAttribute("SPEED__PCT", speed__pct);
 	}
 	
-	public PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col) {
-		for (String name : pactors.getNames()) {
-			TileCoordinate c = getPositionFor(name);
-			if (c.row == row && c.col == col) {
-				return pactors.get(name);
-			}
-		}
-		return noPactorAvailableTileAttributes;
-	}
-	
 	public void addTileType(String name) {
 		if (!tileEnums.contains(name)) {
 			tilenames.add(name);
@@ -150,10 +127,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 			tileEnums.insert(name, enumeration);
 			tilenamesarray = tilenames.toArray(new String[]{});
 		}
-	}
-	
-	public void setPactorToTileFunction(PactorToTileFunction PACTOR_TO_TILE) {
-		pactorToTile = PACTOR_TO_TILE;
 	}
 	
 	public void removeWall(int row, int col) {
@@ -173,17 +146,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public int[][] getTiledBoard() {
-		
-		int[][] worldRepresentation = getWallWorldCopy();
-		
-		for (String name : pactors.getNames()) {
-			Pactor p = pactors.get(name);
-			String s = pactorToTile.getTileName(p);
-			TileCoordinate c = getPositionFor(name);
-			worldRepresentation[c.row][c.col] = tileEnums.get(s);
-		}
-		
-		return worldRepresentation;
+		return wallworld;
 	}
 	
 	public String[] getTileNames() {
@@ -198,12 +161,28 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return wallworld[0].length;
 	}
 	
-	private int[][] getWallWorldCopy() {
-		int[][] wallWorldCopy = new int[getRows()][];
-		for (int row = 0; row < getRows(); row++) {
-			wallWorldCopy[row] = Arrays.copyOf(wallworld[row], getCols());
+	public ArrayList<GameAttributes> getInfoForAllPactorsWithAttribute(String attribute) {
+		ArrayList<GameAttributes> info = new ArrayList<GameAttributes>(); 
+		for (String name : pactors.getNames()) {
+			Pactor p = pactors.get(name);
+			if (p.getValueOf(attribute) != null) {
+				GameAttributes pactorInfo = getInfoForPactor(name);
+				info.add(pactorInfo);
+			}
 		}
-		return wallWorldCopy;
+		return info;
+	}
+	
+	private GameAttributes getInfoForPactor(String name) {
+		GameAttributes info = new GameAttributes();
+		Pactor p = pactors.get(name);
+		TileCoordinate c = getPositionFor(name);
+		info.setAttribute("ROW", c.row);
+		info.setAttribute("COL", c.col);
+		info.setAttribute("DIRECTION", p.getValueOf("DIRECTION"));
+		info.setAttribute("SPEED__PCT", p.getValueOf("SPEED__PCT"));
+		info.setAttribute("NAME", name);
+		return info;
 	}
 	
 	private void updatePactor(Pactor p) {

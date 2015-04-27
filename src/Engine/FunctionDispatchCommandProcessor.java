@@ -8,7 +8,7 @@ public class FunctionDispatchCommandProcessor implements PacDaddyInput {
 
 	final private Table<VoidFunctionPointer> inputFunctions;
 	
-	public FunctionDispatchCommandProcessor() {
+	FunctionDispatchCommandProcessor() {
 		inputFunctions = new Table<VoidFunctionPointer>();
 	}
 	
