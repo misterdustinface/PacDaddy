@@ -15,7 +15,6 @@ final public class PacDaddyGameLauncher {
 		loader.setApplication(game);
 		loader.loadFeatures("features");
 		game.start();
-		game.getInputProcessor().sendCommand("PLAY");
 	}
 	
 	public PacDaddyApplication getApplication() {
