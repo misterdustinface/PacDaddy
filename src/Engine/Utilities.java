@@ -2,12 +2,20 @@ package Engine;
 
 final public class Utilities {
 	
+	final public static String WINDOWS_NEWLINE = "\r\n";
+	
 	public static int[][] StringToIntArray(String str) {
 		if (str == null) {
 			return new int[][] {};
 		}
 		
-        String[] data = str.split(System.lineSeparator());
+		String[] data;
+		
+		if (str.contains(WINDOWS_NEWLINE)) {
+			data = str.split(WINDOWS_NEWLINE);
+		} else {
+			data = str.split(System.lineSeparator());
+		}
         
 		final int ROWS = data.length;
 		final int COLS = data[0].length();

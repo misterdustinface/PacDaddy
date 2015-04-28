@@ -54,6 +54,30 @@ public class Utilities_StringToIntArray_UT {
 		equals(expected, result);
 	}
 	
+	@Test
+	public void test_3LineStringLinuxNewline_expect3x3Array() {
+		String  input    = "111" + "\n"
+						 + "101" + "\n"
+						 + "111";
+		int[][] expected = new int[][]{	{1,1,1},
+										{1,0,1},
+										{1,1,1}};
+		int[][] result   = Utilities.StringToIntArray(input);
+		equals(expected, result);
+	}
+	
+	@Test
+	public void test_3LineStringWindowsNewline_expect3x3Array() {
+		String  input    = "111" + "\r\n"
+						 + "101" + "\r\n"
+						 + "111";
+		int[][] expected = new int[][]{	{1,1,1},
+										{1,0,1},
+										{1,1,1}};
+		int[][] result   = Utilities.StringToIntArray(input);
+		equals(expected, result);
+	}
+	
 	private void equals(int[][] A, int[][] B) {
 		assertEquals(A.length, B.length);
 		for (int row = 0; row < A.length; row++) {
