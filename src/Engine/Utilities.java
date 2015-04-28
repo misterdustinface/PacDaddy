@@ -3,6 +3,10 @@ package Engine;
 final public class Utilities {
 	
 	public static int[][] StringToIntArray(String str) {
+		if (str == null) {
+			return new int[][] {};
+		}
+		
         String[] data = str.split(System.lineSeparator());
         
 		final int ROWS = data.length;
@@ -14,7 +18,9 @@ final public class Utilities {
 		for (int row = 0; row < ROWS; row++) {
 			for (int col = 0; col < COLS; col++) {
 				tilechar = data[row].charAt(col);
-				ar[row][col] = Character.getNumericValue(tilechar);
+				if (Character.isDigit(tilechar)) {
+					ar[row][col] = Character.getNumericValue(tilechar);
+				}
 			}
 		}
 		
