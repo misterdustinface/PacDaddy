@@ -1,6 +1,7 @@
 package Engine;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import datastructures.Queue;
@@ -13,7 +14,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	volatile private Table<Integer> tileEnums;
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
-	volatile private int[][] wallworld;
+	volatile private int[][] tileWorld;
 	volatile private Queue<String> removalQueue;
 	
 	public PacDaddyWorld() {
@@ -22,13 +23,10 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		tileEnums = new Table<Integer>();
 		pactors = new Table<Pactor>();
 		removalQueue = new Queue<String>();
-
-		addTileType("FLOOR");
-		addTileType("WALL");
 	}
 	
 	public void loadFromString(String worldstring) {
-		wallworld = Utilities.StringToIntArray(worldstring);
+		tileWorld = Utilities.StringToIntArray(worldstring);
 	}
 	
 	public void tick() {
@@ -77,6 +75,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		g.setAttribute("POSITION", new TileCoordinate());
 		g.setAttribute("TICK_COUNTER", 0);
 		g.setAttribute("TICKS_TO_MOVE", 0);
+		g.setAttribute("CAN_TRAVERSE", new HashSet<String>());
 		pactors.insert(name, p);
 		worldPactorAttributes.insert(name, g);
 	}
@@ -129,16 +128,14 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	public void removeWall(int row, int col) {
-		wallworld[row][col] = tileEnums.get("FLOOR");
+	public boolean isTraversableForPactor(int row, int col, String pactorname) {
+		int tilenum = tileWorld[row][col];
+		String tilename = tilenamesarray[tilenum];
+		return getTraversableTilesFor(pactorname).contains(tilename);
 	}
 	
-	public void placeWall(int row, int col) {
-		wallworld[row][col] = tileEnums.get("WALL");
-	}
-	
-	public boolean isWall(int row, int col) {
-		return wallworld[row][col] == tileEnums.get("WALL");
+	public void setTileAsTraversableForPactor(String tilename, String pactorname) {
+		getTraversableTilesFor(pactorname).add(tilename);
 	}
 	
 	public boolean isOutOfBounds(int row, int col) {
@@ -146,7 +143,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public int[][] getTiledBoard() {
-		return wallworld;
+		return tileWorld;
 	}
 	
 	public String[] getTileNames() {
@@ -154,11 +151,11 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public int getRows() {
-		return wallworld.length;
+		return tileWorld.length;
 	}
 	
 	public int getCols() {
-		return wallworld[0].length;
+		return tileWorld[0].length;
 	}
 	
 	public GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute) {
@@ -199,7 +196,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		next.col = direction == "LEFT" ? (c.col - 1) : direction == "RIGHT" ? (c.col + 1) : c.col;
 		wrapToWorldBounds(next);
 		
-		if (!isWall(next.row, next.col)) {
+		if (isTraversableForPactor(next.row, next.col, name)) {
 			c.row = next.row;
 			c.col = next.col;
 			toMove.setAttribute("DIRECTION", direction);
@@ -243,4 +240,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return (TileCoordinate) worldPactorAttributes.get(name).getValueOf("POSITION");
 	}
 	
+	private HashSet<String> getTraversableTilesFor(String name) {
+		return (HashSet<String>) worldPactorAttributes.get(name).getValueOf("CAN_TRAVERSE");
+	}
 }
