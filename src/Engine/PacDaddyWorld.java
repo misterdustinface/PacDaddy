@@ -22,6 +22,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		tileEnums = new Table<Integer>();
 		pactors = new Table<Pactor>();
 		removalQueue = new Queue<String>();
+		tilenamesarray = new String[]{};
 	}
 	
 	public void loadFromString(String worldstring) {
