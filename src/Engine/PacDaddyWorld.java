@@ -1,16 +1,16 @@
 package Engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import datastructures.Queue;
 import datastructures.Table;
 
-public class PacDaddyWorld implements PacDaddyBoardReader {
+final public class PacDaddyWorld implements PacDaddyBoardReader {
 
 	volatile private String[] tilenamesarray;
-	volatile private ArrayList<String> tilenames;
 	volatile private Table<Integer> tileEnums;
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
@@ -19,7 +19,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public PacDaddyWorld() {
 		worldPactorAttributes = new Table<GameAttributes>();
-		tilenames = new ArrayList<String>();
 		tileEnums = new Table<Integer>();
 		pactors = new Table<Pactor>();
 		removalQueue = new Queue<String>();
@@ -34,6 +33,107 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 			tickPactor(name);
 		}
 		clearRemovalQueue();
+	}
+	
+	public void addPactor(String name, Pactor p) {
+		p.setAttribute("NAME", name);
+		if (p.getValueOf("SPEED__PCT") == null) {
+			p.setAttribute("SPEED__PCT", 1.0f);
+		}
+		GameAttributes g = new GameAttributes();
+		g.setAttribute("SPAWN", new TileCoordinate());
+		g.setAttribute("POSITION", new TileCoordinate());
+		g.setAttribute("TICK_COUNTER", 0);
+		g.setAttribute("TICKS_TO_MOVE", 0);
+		g.setAttribute("CAN_TRAVERSE", new HashSet<String>());
+		pactors.insert(name, p);
+		worldPactorAttributes.insert(name, g);
+	}
+	
+	public void removePactor(String name) {
+		removalQueue.enqueue(name);
+	}
+	
+	public Pactor getPactor(String name) {
+		return pactors.get(name);
+	}
+	
+	public int getRowOf(String name) {
+		return getPositionFor(name).row;
+	}
+	
+	public int getColOf(String name) {
+		return  getPositionFor(name).col;
+	}
+	
+	public void setPactorSpawn(String name, int row, int col) {
+		TileCoordinate spawn = getSpawnFor(name);
+		spawn.row = row;
+		spawn.col = col;
+	}
+	
+	public void respawnPactor(String name) {
+		TileCoordinate c = getPositionFor(name);
+		TileCoordinate spawn = getSpawnFor(name);
+		c.row = spawn.row;
+		c.col = spawn.col;
+	}
+	
+	public void respawnAllPactors() {
+		for (String name : pactors.getNames()) {
+			respawnPactor(name);
+		}
+	}
+	
+	public void setPactorSpeed(String name, float speed__pct) {
+		pactors.get(name).setAttribute("SPEED__PCT", speed__pct);
+	}
+	
+	public void addTileType(String name) {
+		if (!tileEnums.contains(name)) {
+			int enumeration = tilenamesarray.length;
+			tilenamesarray = Arrays.copyOf(tilenamesarray, enumeration + 1);
+			tilenamesarray[enumeration] = name;
+			tileEnums.insert(name, enumeration);
+		}
+	}
+	
+	public boolean isTraversableForPactor(int row, int col, String pactorname) {
+		int tilenum = tileWorld[row][col];
+		String tilename = tilenamesarray[tilenum];
+		return getTraversableTilesFor(pactorname).contains(tilename);
+	}
+	
+	public void setTileAsTraversableForPactor(String tilename, String pactorname) {
+		getTraversableTilesFor(pactorname).add(tilename);
+	}
+	
+	public int[][] getTiledBoard() {
+		return tileWorld;
+	}
+	
+	public String[] getTileNames() {
+		return tilenamesarray;
+	}
+	
+	public int getRows() {
+		return tileWorld.length;
+	}
+	
+	public int getCols() {
+		return tileWorld[0].length;
+	}
+	
+	public GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute) {
+		ArrayList<GameAttributes> info = new ArrayList<GameAttributes>(); 
+		for (String name : pactors.getNames()) {
+			Pactor p = pactors.get(name);
+			if (p.getValueOf(attribute) != null) {
+				GameAttributes pactorInfo = getInfoForPactor(name);
+				info.add(pactorInfo);
+			}
+		}
+		return info.toArray(new GameAttributes[]{});
 	}
 	
 	private void tickPactor(String name) {
@@ -63,111 +163,6 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 			pactors.remove(toRemove);
 			worldPactorAttributes.remove(toRemove);
 		}
-	}
-	
-	final public void addPactor(String name, Pactor p) {
-		p.setAttribute("NAME", name);
-		if (p.getValueOf("SPEED__PCT") == null) {
-			p.setAttribute("SPEED__PCT", 1.0f);
-		}
-		GameAttributes g = new GameAttributes();
-		g.setAttribute("SPAWN", new TileCoordinate());
-		g.setAttribute("POSITION", new TileCoordinate());
-		g.setAttribute("TICK_COUNTER", 0);
-		g.setAttribute("TICKS_TO_MOVE", 0);
-		g.setAttribute("CAN_TRAVERSE", new HashSet<String>());
-		pactors.insert(name, p);
-		worldPactorAttributes.insert(name, g);
-	}
-	
-	final public void removePactor(String name) {
-		removalQueue.enqueue(name);
-	}
-	
-	final public Pactor getPactor(String name) {
-		return pactors.get(name);
-	}
-	
-	final public int getRowOf(String name) {
-		return getPositionFor(name).row;
-	}
-	
-	final public int getColOf(String name) {
-		return  getPositionFor(name).col;
-	}
-	
-	final public void setPactorSpawn(String name, int row, int col) {
-		TileCoordinate spawn = getSpawnFor(name);
-		spawn.row = row;
-		spawn.col = col;
-	}
-	
-	final public void respawnPactor(String name) {
-		TileCoordinate c = getPositionFor(name);
-		TileCoordinate spawn = getSpawnFor(name);
-		c.row = spawn.row;
-		c.col = spawn.col;
-	}
-	
-	final public void respawnAllPactors() {
-		for (String name : pactors.getNames()) {
-			respawnPactor(name);
-		}
-	}
-	
-	final public void setPactorSpeed(String name, float speed__pct) {
-		pactors.get(name).setAttribute("SPEED__PCT", speed__pct);
-	}
-	
-	public void addTileType(String name) {
-		if (!tileEnums.contains(name)) {
-			tilenames.add(name);
-			int enumeration = tilenames.size() - 1;
-			tileEnums.insert(name, enumeration);
-			tilenamesarray = tilenames.toArray(new String[]{});
-		}
-	}
-	
-	public boolean isTraversableForPactor(int row, int col, String pactorname) {
-		int tilenum = tileWorld[row][col];
-		String tilename = tilenamesarray[tilenum];
-		return getTraversableTilesFor(pactorname).contains(tilename);
-	}
-	
-	public void setTileAsTraversableForPactor(String tilename, String pactorname) {
-		getTraversableTilesFor(pactorname).add(tilename);
-	}
-	
-	public boolean isOutOfBounds(int row, int col) {
-		return row < 0 || col < 0 || row >= getRows() || col >= getCols();
-	}
-	
-	public int[][] getTiledBoard() {
-		return tileWorld;
-	}
-	
-	public String[] getTileNames() {
-		return tilenamesarray;
-	}
-	
-	public int getRows() {
-		return tileWorld.length;
-	}
-	
-	public int getCols() {
-		return tileWorld[0].length;
-	}
-	
-	public GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute) {
-		ArrayList<GameAttributes> info = new ArrayList<GameAttributes>(); 
-		for (String name : pactors.getNames()) {
-			Pactor p = pactors.get(name);
-			if (p.getValueOf(attribute) != null) {
-				GameAttributes pactorInfo = getInfoForPactor(name);
-				info.add(pactorInfo);
-			}
-		}
-		return info.toArray(new GameAttributes[]{});
 	}
 	
 	private GameAttributes getInfoForPactor(String name) {
@@ -240,6 +235,7 @@ public class PacDaddyWorld implements PacDaddyBoardReader {
 		return (TileCoordinate) worldPactorAttributes.get(name).getValueOf("POSITION");
 	}
 	
+	@SuppressWarnings("unchecked")
 	private HashSet<String> getTraversableTilesFor(String name) {
 		return (HashSet<String>) worldPactorAttributes.get(name).getValueOf("CAN_TRAVERSE");
 	}
