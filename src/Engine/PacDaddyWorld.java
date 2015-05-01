@@ -10,10 +10,10 @@ import datastructures.Table;
 
 final public class PacDaddyWorld implements PacDaddyBoardReader {
 
-	volatile private String[] tilenamesarray;
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
 	volatile private int[][] tileWorld;
+	volatile private String[] tilenamesarray;
 	volatile private Queue<String> pactorRemovalQueue;
 	
 	public PacDaddyWorld() {
@@ -180,20 +180,36 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private void updatePactor(String pactorName) {
 		String direction = getRequestedPactorDirection(pactorName);
-		movePactorInDirection(pactorName, direction);
+		attemptToMovePactorInDirection(pactorName, direction);
 		notifyPactorCollisions(pactorName);
+	}
+	
+	private void attemptToMovePactorInDirection(String pactorName, String direction) {
+		if (canPactorMoveInDirection(pactorName, direction)) {
+			movePactorInDirection(pactorName, direction);
+		} else {
+			maintainCurrentPactorMovementIfPossible(pactorName);
+		}
 	}
 	
 	private void movePactorInDirection(String pactorName, String direction) {
 		TileCoordinate pactorPosition = getPositionFor(pactorName);
 		TileCoordinate adjacentTile = getAdjacentTileCoordinateInDirection(pactorPosition, direction);
-		
-		if (isTraversableForPactor(adjacentTile.row, adjacentTile.col, pactorName)) {
-			setPactorPosition(pactorName, adjacentTile);
-			setPactorDirection(pactorName, direction);
-		} else if (!isPactorFacingDirection(pactorName, direction)) {
-			movePactorInDirection(pactorName, getPactorDirection(pactorName));
+		setPactorPosition(pactorName, adjacentTile);
+		setPactorDirection(pactorName, direction);
+	}
+
+	private void maintainCurrentPactorMovementIfPossible(String pactorName) {
+		String currentDirection = getPactorDirection(pactorName);
+		if (canPactorMoveInDirection(pactorName, currentDirection)) {
+			movePactorInDirection(pactorName, currentDirection);
 		}
+	}
+	
+	private boolean canPactorMoveInDirection(String pactorName, String direction) {
+		TileCoordinate pactorPosition = getPositionFor(pactorName);
+		TileCoordinate adjacentTile = getAdjacentTileCoordinateInDirection(pactorPosition, direction);
+		return isTraversableForPactor(adjacentTile.row, adjacentTile.col, pactorName);
 	}
 	
 	private TileCoordinate getAdjacentTileCoordinateInDirection(TileCoordinate current, String direction) {
@@ -213,10 +229,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	private void setPactorDirection(String pactorName, String direction) {
 		Pactor p = pactors.get(pactorName);
 		p.setAttribute("DIRECTION", direction);
-	}
-	
-	private boolean isPactorFacingDirection(String pactorName, String direction) {
-		return getPactorDirection(pactorName) == direction;
 	}
 	
 	private String getPactorDirection(String pactorName) {
