@@ -27,13 +27,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		tileWorld = Utilities.StringToIntArray(worldstring);
 	}
 	
-	public void tick() {
-		for (String name : pactors.getNames()) {
-			tickPactor(name);
-		}
-		performAllRequestedPactorRemovals();
-	}
-	
 	public void addPactor(String name, Pactor p) {
 		setupWorldPactorAttributes(name, p);
 		forceProperPactorAttributes(name, p);
@@ -121,6 +114,13 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 			}
 		}
 		return info.toArray(new GameAttributes[]{});
+	}
+	
+	void tick() {
+		for (String name : pactors.getNames()) {
+			tickPactor(name);
+		}
+		performAllRequestedPactorRemovals();
 	}
 	
 	private boolean doesPactorHaveAttribute(String pactorname, String attribute) {
