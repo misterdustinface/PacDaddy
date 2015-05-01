@@ -116,7 +116,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		ArrayList<GameAttributes> info = new ArrayList<GameAttributes>(); 
 		for (String pactor : pactors.getNames()) {
 			if (doesPactorHaveAttribute(pactor, attribute)) {
-				GameAttributes pactorInfo = getInfoForPactor(pactor);
+				GameAttributes pactorInfo = getWorldInfoForPactor(pactor);
 				info.add(pactorInfo);
 			}
 		}
@@ -166,7 +166,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	private GameAttributes getInfoForPactor(String name) {
+	private GameAttributes getWorldInfoForPactor(String name) {
 		GameAttributes info = new GameAttributes();
 		Pactor p = pactors.get(name);
 		TileCoordinate c = getPositionFor(name);

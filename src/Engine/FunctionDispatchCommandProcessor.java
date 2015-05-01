@@ -4,7 +4,7 @@ import datastructures.Table;
 import functionpointers.VoidFunctionPointer;
 import PacDaddyApplicationInterfaces.PacDaddyInput;
 
-public class FunctionDispatchCommandProcessor implements PacDaddyInput {
+final public class FunctionDispatchCommandProcessor implements PacDaddyInput {
 
 	final private Table<VoidFunctionPointer> inputFunctions;
 	

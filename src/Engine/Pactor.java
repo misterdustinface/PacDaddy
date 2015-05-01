@@ -5,7 +5,7 @@ import InternalInterfaces.AttributeSetter;
 import InternalInterfaces.PactorCollisionFunction;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 
-public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeSetter {
+final public class Pactor extends Actor implements PacDaddyAttributeReader, AttributeSetter {
 
 	final private GameAttributes attributes;
 	private PactorCollisionFunction onCollision;

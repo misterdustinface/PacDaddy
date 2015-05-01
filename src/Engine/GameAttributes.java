@@ -4,7 +4,8 @@ import InternalInterfaces.AttributeSetter;
 import PacDaddyApplicationInterfaces.PacDaddyAttributeReader;
 import datastructures.Table;
 
-public class GameAttributes implements PacDaddyAttributeReader, AttributeSetter {
+final public class GameAttributes implements PacDaddyAttributeReader, AttributeSetter {
+	
 	final private Table<Object> attributes;
 	
 	GameAttributes() {

@@ -3,7 +3,7 @@ package Engine;
 import base.TickingLoop;
 import functionpointers.VoidFunctionPointer;
 
-public class PacDaddyMainLoop extends TickingLoop {
+final public class PacDaddyMainLoop extends TickingLoop {
 	
 	private PacDaddyWorld worldRef;
 	
@@ -15,7 +15,8 @@ public class PacDaddyMainLoop extends TickingLoop {
 		});
 	}
 	
-	final public void setWorld(PacDaddyWorld WORLDREF) {
+	public void setWorld(PacDaddyWorld WORLDREF) {
 		worldRef = WORLDREF;
 	}
+	
 }

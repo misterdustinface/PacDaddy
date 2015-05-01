@@ -7,7 +7,7 @@ import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import PacDaddyApplicationInterfaces.PacDaddyInput;
 import base.Application;
 
-public class PacDaddyGame extends Application implements PacDaddyApplication, WriteAccessor {
+final public class PacDaddyGame extends Application implements PacDaddyApplication, WriteAccessor {
 	
 	final private PacDaddyWorld	world;
 	final private GameAttributes gameAttributes;
@@ -26,21 +26,21 @@ public class PacDaddyGame extends Application implements PacDaddyApplication, Wr
 		setMain(mainLoop);
 	}
 	
-	final public PacDaddyBoardReader getBoardReader() {
+	public PacDaddyBoardReader getBoardReader() {
 		return world;
 	}
 
-	final public PacDaddyAttributeReader getGameAttributeReader() {
+	public PacDaddyAttributeReader getGameAttributeReader() {
 		return gameAttributes;
 	}
 
-	final public PacDaddyInput getInputProcessor() {
+	public PacDaddyInput getInputProcessor() {
 		return inputProcessor;
 	}
 	
 	final static String[] WRITABLES = new String[] {"WORLD", "ATTRIBUTES", "INPUT_PROCESSOR", "MAINLOOP", "PACTOR_CONTROLLER"};
 	
-	final public Object getWritable(String name) {
+	public Object getWritable(String name) {
 		switch(name) {
 		case "WORLD":            	return world;
 		case "ATTRIBUTES":       	return gameAttributes;
@@ -51,7 +51,8 @@ public class PacDaddyGame extends Application implements PacDaddyApplication, Wr
 		}
 	}
 	
-	final public String[] getWritables() {
+	public String[] getWritables() {
 		return WRITABLES;
 	}
+	
 }
