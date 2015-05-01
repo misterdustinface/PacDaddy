@@ -11,17 +11,15 @@ import datastructures.Table;
 final public class PacDaddyWorld implements PacDaddyBoardReader {
 
 	volatile private String[] tilenamesarray;
-	volatile private Table<Integer> tileEnums;
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
 	volatile private int[][] tileWorld;
-	volatile private Queue<String> removalQueue;
+	volatile private Queue<String> pactorRemovalQueue;
 	
 	public PacDaddyWorld() {
 		worldPactorAttributes = new Table<GameAttributes>();
-		tileEnums = new Table<Integer>();
 		pactors = new Table<Pactor>();
-		removalQueue = new Queue<String>();
+		pactorRemovalQueue = new Queue<String>();
 		tilenamesarray = new String[]{};
 	}
 	
@@ -33,26 +31,17 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		for (String name : pactors.getNames()) {
 			tickPactor(name);
 		}
-		clearRemovalQueue();
+		performAllRequestedPactorRemovals();
 	}
 	
 	public void addPactor(String name, Pactor p) {
-		p.setAttribute("NAME", name);
-		if (p.getValueOf("SPEED__PCT") == null) {
-			p.setAttribute("SPEED__PCT", 1.0f);
-		}
-		GameAttributes g = new GameAttributes();
-		g.setAttribute("SPAWN", new TileCoordinate());
-		g.setAttribute("POSITION", new TileCoordinate());
-		g.setAttribute("TICK_COUNTER", 0);
-		g.setAttribute("TICKS_TO_MOVE", 0);
-		g.setAttribute("CAN_TRAVERSE", new HashSet<String>());
+		setupWorldPactorAttributes(name, p);
+		forceProperPactorAttributes(name, p);
 		pactors.insert(name, p);
-		worldPactorAttributes.insert(name, g);
 	}
 	
 	public void removePactor(String name) {
-		removalQueue.enqueue(name);
+		pactorRemovalQueue.enqueue(name);
 	}
 	
 	public Pactor getPactor(String name) {
@@ -91,11 +80,9 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public void addTileType(String name) {
-		if (!tileEnums.contains(name)) {
-			int enumeration = tilenamesarray.length;
-			tilenamesarray = Arrays.copyOf(tilenamesarray, enumeration + 1);
-			tilenamesarray[enumeration] = name;
-			tileEnums.insert(name, enumeration);
+		if (!doesTileTypeAlreadyExist(name)) {
+			tilenamesarray = Arrays.copyOf(tilenamesarray, tilenamesarray.length + 1);
+			tilenamesarray[tilenamesarray.length - 1] = name;
 		}
 	}
 	
@@ -127,40 +114,53 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute) {
 		ArrayList<GameAttributes> info = new ArrayList<GameAttributes>(); 
-		for (String name : pactors.getNames()) {
-			Pactor p = pactors.get(name);
-			if (p.getValueOf(attribute) != null) {
-				GameAttributes pactorInfo = getInfoForPactor(name);
+		for (String pactor : pactors.getNames()) {
+			if (doesPactorHaveAttribute(pactor, attribute)) {
+				GameAttributes pactorInfo = getInfoForPactor(pactor);
 				info.add(pactorInfo);
 			}
 		}
 		return info.toArray(new GameAttributes[]{});
 	}
 	
-	private void tickPactor(String name) {
-		GameAttributes g = worldPactorAttributes.get(name);
-		g.setAttribute("TICK_COUNTER", (int)g.getValueOf("TICK_COUNTER") + 1);
-		updatePactorTicksToMove(name);
-		if ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE")) {
-			g.setAttribute("TICK_COUNTER", 0);
-			Pactor p = getPactor(name);
-			updatePactor(p);
+	private boolean doesPactorHaveAttribute(String pactorname, String attribute) {
+		Pactor p = pactors.get(pactorname);
+		return p.getValueOf(attribute) != null;
+	}
+	
+	private void forceProperPactorAttributes(String name, Pactor p) {
+		p.setAttribute("NAME", name);
+		if (p.getValueOf("SPEED__PCT") == null) {
+			p.setAttribute("SPEED__PCT", 1.0f);
 		}
 	}
 	
-	private void updatePactorTicksToMove(String name) {
-		float speed__pct = (float) pactors.get(name).getValueOf("SPEED__PCT");
-		
-		if (speed__pct == 0) {
-			worldPactorAttributes.get(name).setAttribute("TICKS_TO_MOVE", 0);
-		} else {
-			worldPactorAttributes.get(name).setAttribute("TICKS_TO_MOVE", (int)(100 / (100 * speed__pct)) );
+	private void setupWorldPactorAttributes(String name, Pactor p) {
+		GameAttributes g = new GameAttributes();
+		g.setAttribute("SPAWN", new TileCoordinate());
+		g.setAttribute("POSITION", new TileCoordinate());
+		g.setAttribute("TICK_COUNTER", 0);
+		g.setAttribute("TICKS_TO_MOVE", 0);
+		g.setAttribute("CAN_TRAVERSE", new HashSet<String>());
+		worldPactorAttributes.insert(name, g);
+	}
+	
+	private void tickPactor(String pactorname) {
+		updatePactorTicker(pactorname);
+		if (isTimeToUpdatePactor(pactorname)) {
+			resetPactorTicker(pactorname);
+			updatePactor(pactorname);
 		}
 	}
 	
-	private void clearRemovalQueue() {
-		while (!removalQueue.isEmpty()) {
-			String toRemove = removalQueue.dequeue();
+	private void updatePactorTicker(String name) {
+		incrementPactorTickCounter(name);
+		calculatePactorTickerTrigger(name);
+	}
+	
+	private void performAllRequestedPactorRemovals() {
+		while (!pactorRemovalQueue.isEmpty()) {
+			String toRemove = pactorRemovalQueue.dequeue();
 			pactors.remove(toRemove);
 			worldPactorAttributes.remove(toRemove);
 		}
@@ -178,43 +178,79 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		return info;
 	}
 	
-	private void updatePactor(Pactor p) {
-		String direction = (String) p.getValueOf("REQUESTED_DIRECTION");
-		movePactorInDirection(p, direction);
-		notifyPactorCollisions(p);
+	private void updatePactor(String pactorName) {
+		String direction = getRequestedPactorDirection(pactorName);
+		movePactorInDirection(pactorName, direction);
+		notifyPactorCollisions(pactorName);
 	}
 	
-	private void movePactorInDirection(Pactor toMove, String direction) {
-		String name = (String) toMove.getValueOf("NAME");
-		TileCoordinate c = getPositionFor(name);
-		TileCoordinate next = new TileCoordinate();
-		next.row = direction == "UP"   ? (c.row - 1) : direction == "DOWN"  ? (c.row + 1) : c.row;
-		next.col = direction == "LEFT" ? (c.col - 1) : direction == "RIGHT" ? (c.col + 1) : c.col;
-		wrapToWorldBounds(next);
+	private void movePactorInDirection(String pactorName, String direction) {
+		TileCoordinate pactorPosition = getPositionFor(pactorName);
+		TileCoordinate adjacentTile = getAdjacentTileCoordinateInDirection(pactorPosition, direction);
 		
-		if (isTraversableForPactor(next.row, next.col, name)) {
-			c.row = next.row;
-			c.col = next.col;
-			toMove.setAttribute("DIRECTION", direction);
-		} else if (toMove.getValueOf("DIRECTION") != direction) {
-			movePactorInDirection(toMove, (String) toMove.getValueOf("DIRECTION"));
+		if (isTraversableForPactor(adjacentTile.row, adjacentTile.col, pactorName)) {
+			setPactorPosition(pactorName, adjacentTile);
+			setPactorDirection(pactorName, direction);
+		} else if (!isPactorFacingDirection(pactorName, direction)) {
+			movePactorInDirection(pactorName, getPactorDirection(pactorName));
 		}
 	}
 	
-	private void notifyPactorCollisions(Pactor p) {
-		String name = (String) p.getValueOf("NAME");
+	private TileCoordinate getAdjacentTileCoordinateInDirection(TileCoordinate current, String direction) {
+		TileCoordinate adjacentTile = new TileCoordinate();
+		adjacentTile.row = direction == "UP"   ? (current.row - 1) : direction == "DOWN"  ? (current.row + 1) : current.row;
+		adjacentTile.col = direction == "LEFT" ? (current.col - 1) : direction == "RIGHT" ? (current.col + 1) : current.col;
+		wrapTileCoordinateToWorldBounds(adjacentTile);
+		return adjacentTile;
+	}
+	
+	private void setPactorPosition(String pactorName, TileCoordinate newPosition) {
+		TileCoordinate pactorPosition = getPositionFor(pactorName);
+		pactorPosition.row = newPosition.row;
+		pactorPosition.col = newPosition.col;
+	}
+	
+	private void setPactorDirection(String pactorName, String direction) {
+		Pactor p = pactors.get(pactorName);
+		p.setAttribute("DIRECTION", direction);
+	}
+	
+	private boolean isPactorFacingDirection(String pactorName, String direction) {
+		return getPactorDirection(pactorName) == direction;
+	}
+	
+	private String getPactorDirection(String pactorName) {
+		Pactor p = pactors.get(pactorName);
+		return (String) p.getValueOf("DIRECTION");
+	}
+	
+	private String getRequestedPactorDirection(String pactorName) {
+		Pactor p = pactors.get(pactorName);
+		return (String) p.getValueOf("REQUESTED_DIRECTION");
+	}
+	
+	private void notifyPactorCollisions(String pactorName) {
 		for (String otherName : pactors.getNames()) {
-			Pactor other = pactors.get(otherName);
-			TileCoordinate myPos = getPositionFor(name);
-			TileCoordinate otherPos = getPositionFor(otherName);
-			if (p != other && myPos.row == otherPos.row && myPos.col == otherPos.col) {
-				p.notifyCollidedWith(other);
-				other.notifyCollidedWith(p);
+			if (havePactorsCollided(pactorName, otherName)) {
+				notifyCollisionBetweenPactors(pactorName, otherName);
 			}
 		}
 	}
 	
-	private void wrapToWorldBounds(TileCoordinate c) {
+	private boolean havePactorsCollided(String A, String B) {
+		TileCoordinate APos = getPositionFor(A);
+		TileCoordinate BPos = getPositionFor(B);
+		return (A != B && APos.row == BPos.row && APos.col == BPos.col);
+	}
+	
+	private void notifyCollisionBetweenPactors(String A, String B) {
+		Pactor pactorA = pactors.get(A);
+		Pactor pactorB = pactors.get(B);
+		pactorA.notifyCollidedWith(pactorB);
+		pactorB.notifyCollidedWith(pactorA);
+	}
+	
+	private void wrapTileCoordinateToWorldBounds(TileCoordinate c) {
 		if (c.row >= getRows()) {
 			c.row = 0;
 		} else if (c.row < 0) {
@@ -239,5 +275,40 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	@SuppressWarnings("unchecked")
 	private HashSet<String> getTraversableTilesFor(String name) {
 		return (HashSet<String>) worldPactorAttributes.get(name).getValueOf("CAN_TRAVERSE");
+	}
+	
+	private boolean doesTileTypeAlreadyExist(String name) {
+		for (String s : tilenamesarray) {
+			if (s == name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void incrementPactorTickCounter(String name) {
+		GameAttributes g = worldPactorAttributes.get(name);
+		g.setAttribute("TICK_COUNTER", (int)g.getValueOf("TICK_COUNTER") + 1);
+	}
+	
+	private boolean isTimeToUpdatePactor(String name) {
+		GameAttributes g = worldPactorAttributes.get(name);
+		return (int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE");
+	}
+	
+	private void resetPactorTicker(String name) {
+		GameAttributes g = worldPactorAttributes.get(name);
+		g.setAttribute("TICK_COUNTER", 0);
+	}
+	
+	private void calculatePactorTickerTrigger(String name) {
+		GameAttributes g = worldPactorAttributes.get(name);
+		float speed__pct = (float) pactors.get(name).getValueOf("SPEED__PCT");
+		
+		if (speed__pct == 0) {
+			g.setAttribute("TICKS_TO_MOVE", 0);
+		} else {
+			g.setAttribute("TICKS_TO_MOVE", (int)(100 / (100 * speed__pct)) );
+		}
 	}
 }
