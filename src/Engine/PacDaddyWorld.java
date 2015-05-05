@@ -111,16 +111,34 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		return info.toArray(new GameAttributes[]{});
 	}
 	
+	public boolean doesPactorHaveAttribute(String pactorname, String attribute) {
+		Pactor p = pactors.get(pactorname);
+		return p.getValueOf(attribute) != null;
+	}
+	
+	public GameAttributes getWorldInfoForPactor(String name) {
+		GameAttributes info = new GameAttributes();
+		Pactor p = pactors.get(name);
+		TileCoordinate c = getPositionFor(name);
+		info.setAttribute("ROW", c.row);
+		info.setAttribute("COL", c.col);
+		info.setAttribute("DIRECTION", p.getValueOf("DIRECTION"));
+		info.setAttribute("SPEED__PCT", p.getValueOf("SPEED__PCT"));
+		info.setAttribute("NAME", name);
+		return info;
+	}
+	
+	public boolean canPactorMoveInDirection(String pactorName, String direction) {
+		TileCoordinate pactorPosition = getPositionFor(pactorName);
+		TileCoordinate adjacentTile = getAdjacentTileCoordinateInDirection(pactorPosition, direction);
+		return isTraversableForPactor(adjacentTile.row, adjacentTile.col, pactorName);
+	}
+	
 	void tick() {
 		for (String name : pactors.getNames()) {
 			tickPactor(name);
 		}
 		performAllRequestedPactorRemovals();
-	}
-	
-	private boolean doesPactorHaveAttribute(String pactorname, String attribute) {
-		Pactor p = pactors.get(pactorname);
-		return p.getValueOf(attribute) != null;
 	}
 	
 	private void forceProperPactorAttributes(String name, Pactor p) {
@@ -161,18 +179,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	private GameAttributes getWorldInfoForPactor(String name) {
-		GameAttributes info = new GameAttributes();
-		Pactor p = pactors.get(name);
-		TileCoordinate c = getPositionFor(name);
-		info.setAttribute("ROW", c.row);
-		info.setAttribute("COL", c.col);
-		info.setAttribute("DIRECTION", p.getValueOf("DIRECTION"));
-		info.setAttribute("SPEED__PCT", p.getValueOf("SPEED__PCT"));
-		info.setAttribute("NAME", name);
-		return info;
-	}
-	
 	private void updatePactor(String pactorName) {
 		String requestedDirection = getRequestedPactorDirection(pactorName);
 		attemptToMovePactorInDirection(pactorName, requestedDirection);
@@ -199,12 +205,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		if (canPactorMoveInDirection(pactorName, currentDirection)) {
 			movePactorInDirection(pactorName, currentDirection);
 		}
-	}
-	
-	private boolean canPactorMoveInDirection(String pactorName, String direction) {
-		TileCoordinate pactorPosition = getPositionFor(pactorName);
-		TileCoordinate adjacentTile = getAdjacentTileCoordinateInDirection(pactorPosition, direction);
-		return isTraversableForPactor(adjacentTile.row, adjacentTile.col, pactorName);
 	}
 	
 	private TileCoordinate getAdjacentTileCoordinateInDirection(TileCoordinate current, String direction) {
