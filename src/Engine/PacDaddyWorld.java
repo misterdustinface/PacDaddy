@@ -134,6 +134,10 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		return isTraversableForPactor(adjacentTile.row, adjacentTile.col, pactorName);
 	}
 	
+	public String[] getPactorNames() {
+		return pactors.getNames().toArray(new String[]{});
+	}
+	
 	void tick() {
 		for (String name : pactors.getNames()) {
 			tickPactor(name);
