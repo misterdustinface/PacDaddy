@@ -70,7 +70,7 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void setPactorSpeed(String name, float speed__pct)
   * boolean isTraversableForPactor(int row, int col, String pactorname)
   * void setTileAsTraversableForPactor(String tilename, String pactorname)
-  * GameAttributes[] getWorldInfoForAllPactorsWithAttribute(String attribute) - Array of WorldInfo for Pactor
+  * GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute) - Array of Info for Pactors with the given Attribute (in this case it is WorldInfo).
   * boolean doesPactorHaveAttribute(String pactorname, String attribute)
   * GameAttributes getWorldInfoForPactor(String name) - Read-only information that the world has about the pactor, such as ROW, COL, DIRECTION, SPEED__PCT, and NAME, which cannot be accessed from the Pactor itself (except for NAME when a pactor is added to the world).
   * boolean canPactorMoveInDirection(String pactorName, String direction) - UP, DOWN, LEFT, RIGHT
