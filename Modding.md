@@ -36,7 +36,39 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void sendCommandToPactor(String command)
   * String[] getPactorCommands()
 
-* PacDaddyWorld: 
+* PacDaddyWorld: The world in which all Pactors interact.  It has strict regulations which cause the Pactors to act in a manner which replicates PacMan.
+  * void loadFromString(String worldstring)
+  * void addTileType(String name)
+  * int[][] getTiledBoard()
+  * String[] getTileNames()
+  * int getRows()
+  * int getCols()
+  * void addPactor(String name, Pactor p)
+  * void removePactor(String name)
+  * Pactor getPactor(String name)
+  * int getRowOf(String name)
+  * int getColOf(String name)
+  * void setPactorSpawn(String name, int row, int col)
+  * void respawnPactor(String name)
+  * void respawnAllPactors()
+  * void setPactorSpeed(String name, float speed__pct)
+  * boolean isTraversableForPactor(int row, int col, String pactorname)
+  * void setTileAsTraversableForPactor(String tilename, String pactorname)
+  * GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute)
+  * boolean doesPactorHaveAttribute(String pactorname, String attribute)
+  * GameAttributes getWorldInfoForPactor(String name)
+  * boolean canPactorMoveInDirection(String pactorName, String direction)
+  * String[] getPactorNames()
+ 
+* Pactor
+  * void setOnCollisionFunction(PactorCollisionFunction ON_COLLISION)
+  * void setAttribute(String name, Object value)
+  * Object getValueOf(String attributeName) 
+  * String[] getAttributes()
+  * void learnAction(String action, VoidFunctionPointer implementation)
+  * void forgetAction(String action)
+  * void performAction(String action)
+  * Set<String> getActions()
 
  
   
