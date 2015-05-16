@@ -8,7 +8,7 @@
 * PacDaddyBoardReader
 	* int[][] getTiledBoard();
 	* String[] getTileNames();
-	* PacDaddyAttributeReader getAttributeReaderAtTile(int row, int col);
+	* GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute);
 
 * PacDaddyAttributeReader
   * Object getValueOf(String attributeName);
