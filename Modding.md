@@ -7,7 +7,17 @@ This engine is built on top of LibD, so utilize its features.
 
 Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
 
-### PacDaddyGame.  
+##### Index
+0. [PacDaddyGame](#pacdaddygame)
+1. [PacDaddyMainLoop](#pacdaddymainloop)
+2. [GameAttributes](#gameattributes)
+3. [FunctionDispatchCommandProcessor](#functiondispatchcommandprocessor)
+4. [PactorController](#pactorcontroller)
+5. [PacDaddyWorld](#pacdaddyworld)
+6. [Pactor](#pactor)
+7. [VoidFunctionPointer](#voidfunctionpointer)
+
+### [PacDaddyGame](#index)
 It happens to be an Application from LibD.
 * PacDaddyBoardReader getBoardReader()
 * PacDaddyAttributeReader getGameAttributeReader()
@@ -28,7 +38,7 @@ It happens to be an Application from LibD.
 * void stopComponent(String name)
 
 
-### PacDaddyMainLoop: 
+### [PacDaddyMainLoop](#index)
 The main loop for the game.  Add main-loop specific functions to it.  It happens to be a TickingLoop from LibD (a Runnable).
 * addFunction(VoidFunctionPointer function)
 * void setUpdatesPerSecond(int UPS)
@@ -36,28 +46,28 @@ The main loop for the game.  Add main-loop specific functions to it.  It happens
 * boolean isPaused()
 
 
-### GameAttributes: 
+### [GameAttributes](#index)
 In this case, these are the attributes of the PacDaddyGame.  Examples of attributes that the PacDaddyGame could have are score, lives, fps, updates per second, etc.  It also happens to be a PacDaddyAttributeReader.
 * void setAttribute(String name, Object value)
 * Object getValueOf(String attributeName)
 * String[] getAttributes()
 
 
-### FunctionDispatchCommandProcessor: 
+### [FunctionDispatchCommandProcessor](#index)
 In this case, this is a method of dispatching commands by name for the PacDaddyGame.  Examples of commands that the PacDaddyGame could have are play, pause, joystick up, etc.  It also happens to be a PacDaddyInput.
 * void addCommand(String command, VoidFunctionPointer implementation)
 * void sendCommand(String command)
 * String[] getCommands()
 
 
-### PactorController: 
+### [PactorController](#index)
 Sends commands to a Pactor, which is the Game-Object of pacman.
 * void setPactor(Pactor pactor)
 * void sendCommandToPactor(String command)
 * String[] getPactorCommands()
 
 
-### PacDaddyWorld: 
+### [PacDaddyWorld](#index)
 The world in which all Pactors interact.  It has strict regulations which cause the Pactors to act in a manner which replicates PacMan.  It also happens to be a PacDaddyBoardReader.
 * void loadFromString(String worldstring) 
   * A 2D array-string of integers to create a tiled map.
@@ -88,7 +98,7 @@ The world in which all Pactors interact.  It has strict regulations which cause 
 * String[] getPactorNames()
  
 
-### Pactor: 
+### [Pactor](#index)
 The Game-Object of pacman.
 * void setOnCollisionFunction(PactorCollisionFunction ON_COLLISION)
 * void setAttribute(String name, Object value)
@@ -100,7 +110,7 @@ The Game-Object of pacman.
 * Set<String> getActions() 
   * UP, LEFT, DOWN, RIGHT, and NONE are already defined.
 
-### VoidFunctionPointer: 
+### [VoidFunctionPointer](#index)
 Exactly what you think it is.  Implement its interface:
 * void call();
   
