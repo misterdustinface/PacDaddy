@@ -4,7 +4,7 @@ All [Features](Adding-Features.md) have access to the PacDaddyGame class; theref
 
 Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
 
-* PacDaddyGame
+* PacDaddyGame.  It happens to be an Application from LibD.
   * PacDaddyBoardReader getBoardReader()
   * PacDaddyAttributeReader getGameAttributeReader()
   * PacDaddyInput getInputProcessor()
@@ -15,9 +15,19 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
     * "INPUT_PROCESSOR", FunctionDispatchCommandProcessor
     * "PACTOR_CONTROLLER", PactorController
     * "WORLD", PacDaddyWorld
+  * void setMain(TickingLoop PROGRAM_MAIN)
+  * void addComponent(String name, Runnable runnableComponent)
+  * String[] getComponentNames()
+  * void start()
+  * void quit()
+  * void startComponent(String name)
+  * void stopComponent(String name)
 
-* PacDaddyMainLoop: The main loop for the game.  Add main-loop specific functions to it with:
+* PacDaddyMainLoop: The main loop for the game.  Add main-loop specific functions to it.  It happens to be a TickingLoop from LibD.
   * addFunction(VoidFunctionPointer function)
+  * void setUpdatesPerSecond(int UPS)
+  * void run()
+  * boolean isPaused()
 
 * GameAttributes: In this case, these are the attributes of the PacDaddyGame.  Examples of attributes that the PacDaddyGame could have are score, lives, fps, updates per second, etc.  It also happens to be a PacDaddyAttributeReader.
   * void setAttribute(String name, Object value)
