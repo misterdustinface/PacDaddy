@@ -108,7 +108,7 @@ The Game-Object of pacman.
 * void forgetAction(String action)
 * void performAction(String action)
 * Set<String> getActions() 
-  * "UP", "LEFT", "DOWN", "RIGHT", and "NONE" are already defined.
+  * "UP", "LEFT", "DOWN", "RIGHT", and "NONE" have already been defined.
 
 ### [VoidFunctionPointer](#index)
 Exactly what you think it is.  Implement its interface:
