@@ -92,9 +92,9 @@ The world in which all Pactors interact.  It has strict regulations which cause 
   * Array of Info for Pactors with the given Attribute (in this case it is WorldInfo).
 * boolean doesPactorHaveAttribute(String pactorname, String attribute)
 * GameAttributes getWorldInfoForPactor(String name) 
-  * Read-only information that the world has about the pactor, such as ROW, COL, DIRECTION, SPEED__PCT, and NAME, which cannot be accessed from the Pactor itself (except for NAME when a pactor is added to the world).
+  * Read-only information that the world has about the pactor, such as "ROW", "COL", "DIRECTION", "SPEED__PCT", and "NAME", which cannot be accessed from the Pactor itself (except for "NAME" after a pactor has been added to the world).
 * boolean canPactorMoveInDirection(String pactorName, String direction)
-  * UP, DOWN, LEFT, RIGHT are currently the only defined directions
+  * "UP", "DOWN", "LEFT", "RIGHT" are currently the only defined directions
 * String[] getPactorNames()
  
 
@@ -108,7 +108,7 @@ The Game-Object of pacman.
 * void forgetAction(String action)
 * void performAction(String action)
 * Set<String> getActions() 
-  * UP, LEFT, DOWN, RIGHT, and NONE are already defined.
+  * "UP", "LEFT", "DOWN", "RIGHT", and "NONE" are already defined.
 
 ### [VoidFunctionPointer](#index)
 Exactly what you think it is.  Implement its interface:
