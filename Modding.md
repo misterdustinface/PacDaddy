@@ -23,26 +23,31 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void startComponent(String name)
   * void stopComponent(String name)
 
+
 * PacDaddyMainLoop: The main loop for the game.  Add main-loop specific functions to it.  It happens to be a TickingLoop from LibD.
   * addFunction(VoidFunctionPointer function)
   * void setUpdatesPerSecond(int UPS)
   * void run()
   * boolean isPaused()
 
+
 * GameAttributes: In this case, these are the attributes of the PacDaddyGame.  Examples of attributes that the PacDaddyGame could have are score, lives, fps, updates per second, etc.  It also happens to be a PacDaddyAttributeReader.
   * void setAttribute(String name, Object value)
   * Object getValueOf(String attributeName)
   * String[] getAttributes()
+
 
 * FunctionDispatchCommandProcessor: In this case, this is a method of dispatching commands by name for the PacDaddyGame.  Examples of commands that the PacDaddyGame could have are play, pause, joystick up, etc.  It also happens to be a PacDaddyInput.
   * void addCommand(String command, VoidFunctionPointer implementation)
   * void sendCommand(String command)
   * String[] getCommands()
 
+
 * PactorController: Sends commands to a Pactor, which is the Game-Object of pacman.
   * void setPactor(Pactor pactor)
   * void sendCommandToPactor(String command)
   * String[] getPactorCommands()
+
 
 * PacDaddyWorld: The world in which all Pactors interact.  It has strict regulations which cause the Pactors to act in a manner which replicates PacMan.  It also happens to be a PacDaddyBoardReader.
   * void loadFromString(String worldstring)
@@ -68,7 +73,8 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * boolean canPactorMoveInDirection(String pactorName, String direction)
   * String[] getPactorNames()
  
-* Pactor
+
+* Pactor: The Game-Object of pacman.
   * void setOnCollisionFunction(PactorCollisionFunction ON_COLLISION)
   * void setAttribute(String name, Object value)
   * Object getValueOf(String attributeName) 
@@ -78,6 +84,7 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void performAction(String action)
   * Set<String> getActions()
 
- 
+* VoidFunctionPointer: Exactly what you think it is.  Implement its interface:
+  * void call();
   
 
