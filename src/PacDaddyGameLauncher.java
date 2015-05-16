@@ -1,7 +1,6 @@
-
-
 import Engine.PacDaddyGame;
 import FeatureLoader.FeatureLoader;
+import FeatureLoaderImp.LuaJFeatureLoader;
 import PacDaddyApplicationInterfaces.PacDaddyApplication;
 
 final public class PacDaddyGameLauncher {
@@ -11,7 +10,7 @@ final public class PacDaddyGameLauncher {
 	
 	public PacDaddyGameLauncher() {
 		game = new PacDaddyGame();
-		loader = new FeatureLoader();
+		loader = new LuaJFeatureLoader();
 		loader.setApplication(game);
 		loader.loadFeatures("features");
 		game.start();
