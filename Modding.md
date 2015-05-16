@@ -10,8 +10,6 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * PacDaddyInput getInputProcessor()
   * Object getWritable(String name)
   * String[] getWritables()
-
-  * The writables of a PacDaddyGame are: 
     * "MAINLOOP", PacDaddyMainLoop
     * "ATTRIBUTES", GameAttributes
     * "INPUT_PROCESSOR", FunctionDispatchCommandProcessor
