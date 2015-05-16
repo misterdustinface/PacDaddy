@@ -2,6 +2,7 @@
 
 All [Features](Adding-Features.md) have access to the PacDaddyGame class; therefore, they have access to all public attributes and methods of said class.
 
+This engine's FeatureLoader is built on top of LuaJ, so utilize its features.
 This engine is built on top of LibD, so utilize its features.
 
 Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
@@ -26,7 +27,7 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void stopComponent(String name)
 
 
-* PacDaddyMainLoop: The main loop for the game.  Add main-loop specific functions to it.  It happens to be a TickingLoop from LibD.
+* PacDaddyMainLoop: The main loop for the game.  Add main-loop specific functions to it.  It happens to be a TickingLoop from LibD (a Runnable).
   * addFunction(VoidFunctionPointer function)
   * void setUpdatesPerSecond(int UPS)
   * void run()
@@ -52,8 +53,8 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
 
 
 * PacDaddyWorld: The world in which all Pactors interact.  It has strict regulations which cause the Pactors to act in a manner which replicates PacMan.  It also happens to be a PacDaddyBoardReader.
-  * void loadFromString(String worldstring)
-  * void addTileType(String name)
+  * void loadFromString(String worldstring) - A 2D array-string of integers to create a tiled map
+  * void addTileType(String name) - Names for the tiles, ordered by integer value as an index
   * int[][] getTiledBoard()
   * String[] getTileNames()
   * int getRows()
@@ -69,10 +70,10 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void setPactorSpeed(String name, float speed__pct)
   * boolean isTraversableForPactor(int row, int col, String pactorname)
   * void setTileAsTraversableForPactor(String tilename, String pactorname)
-  * GameAttributes[] getInfoForAllPactorsWithAttribute(String attribute)
+  * GameAttributes[] getWorldInfoForAllPactorsWithAttribute(String attribute) - Array of WorldInfo for Pactor
   * boolean doesPactorHaveAttribute(String pactorname, String attribute)
-  * GameAttributes getWorldInfoForPactor(String name)
-  * boolean canPactorMoveInDirection(String pactorName, String direction)
+  * GameAttributes getWorldInfoForPactor(String name) - Read-only information that the world has about the pactor, such as ROW, COL, DIRECTION, SPEED__PCT, and NAME, which cannot be accessed from the Pactor itself (except for NAME when a pactor is added to the world).
+  * boolean canPactorMoveInDirection(String pactorName, String direction) - UP, DOWN, LEFT, RIGHT
   * String[] getPactorNames()
  
 
@@ -84,7 +85,7 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * void learnAction(String action, VoidFunctionPointer implementation)
   * void forgetAction(String action)
   * void performAction(String action)
-  * Set<String> getActions()
+  * Set<String> getActions() - UP, LEFT, DOWN, RIGHT, and NONE are defined.
 
 * VoidFunctionPointer: Exactly what you think it is.  Implement its interface:
   * void call();
