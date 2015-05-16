@@ -11,12 +11,12 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
   * Object getWritable(String name)
   * String[] getWritables()
 
-* The writables of a PacDaddyGame are: 
-  * "MAINLOOP", PacDaddyMainLoop
-  * "ATTRIBUTES", GameAttributes
-  * "INPUT_PROCESSOR", FunctionDispatchCommandProcessor
-  * "PACTOR_CONTROLLER", PactorController
-  * "WORLD", PacDaddyWorld
+  * The writables of a PacDaddyGame are: 
+    * "MAINLOOP", PacDaddyMainLoop
+    * "ATTRIBUTES", GameAttributes
+    * "INPUT_PROCESSOR", FunctionDispatchCommandProcessor
+    * "PACTOR_CONTROLLER", PactorController
+    * "WORLD", PacDaddyWorld
 
 * PacDaddyMainLoop: The main loop for the game.  Add main-loop specific functions to it with:
   * addFunction(VoidFunctionPointer function)
