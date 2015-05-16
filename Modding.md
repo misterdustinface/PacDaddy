@@ -2,7 +2,7 @@
 
 All [Features](Adding-Features.md) have access to the PacDaddyGame class; therefore, they have access to all public attributes and methods of said class.
 
-This engine's FeatureLoader is built on top of LuaJ, so utilize its features.
+This FeatureLoader is built on top of LuaJ, so utilize its features.
 This engine is built on top of LibD, so utilize its features.
 
 Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
