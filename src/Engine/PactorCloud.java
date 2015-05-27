@@ -7,21 +7,14 @@ import datastructures.Table;
 
 class PactorCloud implements Iterable<String> {
 	
-	volatile private Table<Pactor> pactors;	
-	volatile private Table<GameAttributes> hiddenPactorAttributes;
+	volatile private Table<Pactor> pactors;
 	
 	PactorCloud() {
 		pactors = new Table<Pactor>();
-		hiddenPactorAttributes = new Table<GameAttributes>();
 	}
 	
 	public void addPactor(String name, Pactor p) {
-		hiddenPactorAttributes.insert(name, new GameAttributes());
 		pactors.insert(name, p);
-	}
-	
-	public GameAttributes getHiddenAttributes(String name) {
-		return hiddenPactorAttributes.get(name);
 	}
 	
 	public void removePactor(String name) {

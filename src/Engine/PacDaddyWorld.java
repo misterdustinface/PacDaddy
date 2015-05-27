@@ -3,16 +3,19 @@ package Engine;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import datastructures.Table;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 
 final public class PacDaddyWorld implements PacDaddyBoardReader {
 
 	private TileWorld tileWorld;
 	private PactorCloud pactorCloud;
+	volatile private Table<GameAttributes> hiddenPactorAttributes;
 	
 	public PacDaddyWorld() {
 		tileWorld = new TileWorld();
 		pactorCloud = new PactorCloud();
+		hiddenPactorAttributes = new Table<GameAttributes>();
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -41,12 +44,14 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	public void addPactor(String name, Pactor p) {
 		pactorCloud.addPactor(name, p);
-		setupWorldPactorAttributes(name);
-		forceProperPactorAttributes(name, p);
+		hiddenPactorAttributes.insert(name, new GameAttributes());
+		setupHiddenWorldPactorAttributes(name);
+		forceProperPactorAttributes(name);
 	}
 	
 	public void removePactor(String name) {
 		pactorCloud.removePactor(name);
+		hiddenPactorAttributes.remove(name);
 	}
 	
 	public Pactor getPactor(String name) {
@@ -148,15 +153,16 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		}
 	}
 	
-	private void forceProperPactorAttributes(String name, Pactor p) {
+	private void forceProperPactorAttributes(String name) {
+		Pactor p = pactorCloud.getPactor(name);
 		p.setAttribute("NAME", name);
-		if (p.getValueOf("SPEED__PCT") == null) {
+		if (!doesPactorHaveAttribute(name, "SPEED__PCT")) {
 			p.setAttribute("SPEED__PCT", 1.0f);
 		}
 	}
 	
-	private void setupWorldPactorAttributes(String name) {
-		GameAttributes g = pactorCloud.getHiddenAttributes(name);
+	private void setupHiddenWorldPactorAttributes(String name) {
+		GameAttributes g = hiddenPactorAttributes.get(name);
 		g.setAttribute("SPAWN", new TileCoordinate());
 		g.setAttribute("POSITION", new TileCoordinate());
 		g.setAttribute("TICK_COUNTER", 0);
@@ -257,35 +263,35 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	private TileCoordinate getSpawnFor(String name) {
-		return (TileCoordinate) pactorCloud.getHiddenAttributes(name).getValueOf("SPAWN");
+		return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("SPAWN");
 	}
 	
 	private TileCoordinate getPositionFor(String name) {
-		return (TileCoordinate) pactorCloud.getHiddenAttributes(name).getValueOf("POSITION");
+		return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("POSITION");
 	}
 	
 	@SuppressWarnings("unchecked")
 	private HashSet<String> getTraversableTilesFor(String name) {
-		return (HashSet<String>) pactorCloud.getHiddenAttributes(name).getValueOf("CAN_TRAVERSE");
+		return (HashSet<String>) hiddenPactorAttributes.get(name).getValueOf("CAN_TRAVERSE");
 	}
 	
 	private void incrementPactorTickCounter(String name) {
-		GameAttributes g = pactorCloud.getHiddenAttributes(name);
+		GameAttributes g = hiddenPactorAttributes.get(name);
 		g.setAttribute("TICK_COUNTER", (int)g.getValueOf("TICK_COUNTER") + 1);
 	}
 	
 	private boolean isTimeToUpdatePactor(String name) {
-		GameAttributes g = pactorCloud.getHiddenAttributes(name);
+		GameAttributes g = hiddenPactorAttributes.get(name);
 		return ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE"));
 	}
 	
 	private void resetPactorTicker(String name) {
-		GameAttributes g = pactorCloud.getHiddenAttributes(name);
+		GameAttributes g = hiddenPactorAttributes.get(name);
 		g.setAttribute("TICK_COUNTER", 0);
 	}
 	
 	private void calculatePactorTickerTrigger(String name) {
-		GameAttributes g = pactorCloud.getHiddenAttributes(name);
+		GameAttributes g = hiddenPactorAttributes.get(name);
 		float speed__pct = (float) pactorCloud.getPactor(name).getValueOf("SPEED__PCT");
 		
 		if (speed__pct == 0) {
