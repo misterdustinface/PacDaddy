@@ -13,14 +13,12 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
 	volatile private Queue<String> pactorRemovalQueue;
-	private int tickingSpeed;
 	
 	public PacDaddyWorld() {
 		tileWorld = new TileWorld();
 		pactors = new Table<Pactor>();
 		worldPactorAttributes = new Table<GameAttributes>();
 		pactorRemovalQueue = new Queue<String>();
-		tickingSpeed = 0;
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -145,10 +143,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 			tickPactor(name);
 		}
 		performAllRequestedPactorRemovals();
-	}
-	
-	void setTickingSpeed(int speed) {
-		tickingSpeed = speed;
 	}
 	
 	private void forceProperPactorAttributes(String name, Pactor p) {
@@ -303,7 +297,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		if (speed__pct == 0) {
 			g.setAttribute("TICKS_TO_MOVE", 0);
 		} else {
-			float smoothTicks = (((float)tickingSpeed / speed__pct) / tickingSpeed);
+			float smoothTicks = (1f / speed__pct);
 			int roughTicksLowerBound = (int)Math.floor(smoothTicks);
 			float roundOffTicks = smoothTicks - roughTicksLowerBound;
 			g.setAttribute("FRACTIONAL_TICK_ACCUMULATOR", (float)g.getValueOf("FRACTIONAL_TICK_ACCUMULATOR") + roundOffTicks);

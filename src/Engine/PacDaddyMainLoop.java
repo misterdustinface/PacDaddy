@@ -21,9 +21,4 @@ final public class PacDaddyMainLoop extends TickingLoop {
 		worldRef = WORLDREF;
 	}
 	
-	public void setUpdatesPerSecond(int UPS) {
-		super.setUpdatesPerSecond(UPS);
-		worldRef.setTickingSpeed(UPS);
-	}
-	
 }
