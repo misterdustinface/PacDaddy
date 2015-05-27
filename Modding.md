@@ -13,9 +13,9 @@ Think of the PacDaddyGame as a physical arcade cabinet for PacMan.
 1. [PacDaddyMainLoop](#pacdaddymainloop)
 2. [GameAttributes](#gameattributes)
 3. [FunctionDispatchCommandProcessor](#functiondispatchcommandprocessor)
-4. [PactorController](#pactorcontroller)
-5. [PacDaddyWorld](#pacdaddyworld)
-6. [Pactor](#pactor)
+4. [PacDaddyWorld](#pacdaddyworld)
+5. [Pactor](#pactor)
+6. [PactorController](#pactorcontroller)
 7. [VoidFunctionPointer](#voidfunctionpointer)
 
 ### [PacDaddyGame](#index)
@@ -28,7 +28,6 @@ It happens to be an Application from LibD.
   * "MAINLOOP", PacDaddyMainLoop
   * "ATTRIBUTES", GameAttributes
   * "INPUT_PROCESSOR", FunctionDispatchCommandProcessor
-  * "PACTOR_CONTROLLER", PactorController
   * "WORLD", PacDaddyWorld
 * void setMain(TickingLoop PROGRAM_MAIN)
 * void addComponent(String name, Runnable runnableComponent)
@@ -61,13 +60,6 @@ In this case, this is a method of dispatching commands by name for the PacDaddyG
 * String[] getCommands()
 
 
-### [PactorController](#index)
-Sends commands to a Pactor, which is the Game-Object of pacman.
-* void setPactor(Pactor pactor)
-* void sendCommandToPactor(String command)
-* String[] getPactorCommands()
-
-
 ### [PacDaddyWorld](#index)
 The world in which all Pactors interact.  It has strict regulations which cause the Pactors to act in a manner which replicates PacMan.  It also happens to be a PacDaddyBoardReader.
 * void loadFromString(String worldstring) 
@@ -94,6 +86,7 @@ The world in which all Pactors interact.  It has strict regulations which cause 
 * boolean doesPactorHaveAttribute(String pactorname, String attribute)
 * GameAttributes getWorldInfoForPactor(String name) 
   * Read-only information that the world has about the pactor, such as "ROW", "COL", "DIRECTION", "SPEED__PCT", and "NAME", which cannot be accessed from the Pactor itself (except for "NAME" after a pactor has been added to the world).
+* int getNumberOfPactorsWithAttribute(String attribute) 
 * boolean canPactorMoveInDirection(String pactorName, String direction)
   * "UP", "DOWN", "LEFT", "RIGHT" are currently the only defined directions
 * String[] getPactorNames()
@@ -110,6 +103,15 @@ The Game-Object of pacman.
 * void performAction(String action)
 * Set<String> getActions() 
   * "UP", "LEFT", "DOWN", "RIGHT", and "NONE" have already been defined.
+
+
+### [PactorController](#index)
+Sends commands to a Pactor, which is the Game-Object of pacman.
+* void setPactor(Pactor pactor)
+* void sendCommandToPactor(String command)
+* String[] getPactorCommands()
+* VoidFunctionPointer wrapCommand(final String command)
+
 
 ### [VoidFunctionPointer](#index)
 Exactly what you think it is.  Implement its interface:
