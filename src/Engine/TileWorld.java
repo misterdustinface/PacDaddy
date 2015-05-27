@@ -8,6 +8,7 @@ class TileWorld {
 	volatile private String[] tilenamesarray;
 	
 	TileWorld() {
+		tileWorld = new int[][]{};
 		tilenamesarray = new String[]{};
 	}
 	

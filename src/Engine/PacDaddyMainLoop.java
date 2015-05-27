@@ -8,6 +8,8 @@ final public class PacDaddyMainLoop extends TickingLoop {
 	private PacDaddyWorld worldRef;
 	
 	PacDaddyMainLoop() {
+		worldRef = new PacDaddyWorld();
+		
 		addFunction(new VoidFunctionPointer() {
 			public void call() {
 				worldRef.tick();
@@ -17,6 +19,11 @@ final public class PacDaddyMainLoop extends TickingLoop {
 	
 	public void setWorld(PacDaddyWorld WORLDREF) {
 		worldRef = WORLDREF;
+	}
+	
+	public void setUpdatesPerSecond(int UPS) {
+		super.setUpdatesPerSecond(UPS);
+		worldRef.setTickingSpeed(UPS);
 	}
 	
 }

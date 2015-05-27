@@ -13,12 +13,14 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	volatile private Table<Pactor> pactors;	
 	volatile private Table<GameAttributes> worldPactorAttributes;
 	volatile private Queue<String> pactorRemovalQueue;
+	private int tickingSpeed;
 	
 	public PacDaddyWorld() {
 		tileWorld = new TileWorld();
-		worldPactorAttributes = new Table<GameAttributes>();
 		pactors = new Table<Pactor>();
+		worldPactorAttributes = new Table<GameAttributes>();
 		pactorRemovalQueue = new Queue<String>();
+		tickingSpeed = 0;
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -143,6 +145,10 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 			tickPactor(name);
 		}
 		performAllRequestedPactorRemovals();
+	}
+	
+	void setTickingSpeed(int speed) {
+		tickingSpeed = speed;
 	}
 	
 	private void forceProperPactorAttributes(String name, Pactor p) {
@@ -296,7 +302,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		if (speed__pct == 0) {
 			g.setAttribute("TICKS_TO_MOVE", 0);
 		} else {
-			g.setAttribute("TICKS_TO_MOVE", (int)(100 / (100 * speed__pct)) );
+			g.setAttribute("TICKS_TO_MOVE", (int)(tickingSpeed * speed__pct));
 		}
 	}
 	

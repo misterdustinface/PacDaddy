@@ -6,7 +6,7 @@ final public class PactorController {
 	private Pactor pactor;
 	
 	public PactorController() {
-		
+		pactor = new Pactor();
 	}
 	
 	public void setPactor(Pactor pactor) {
