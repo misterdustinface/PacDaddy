@@ -1,5 +1,7 @@
 package Engine;
 
+import functionpointers.VoidFunctionPointer;
+
 
 final public class PactorController {
 	
@@ -19,6 +21,14 @@ final public class PactorController {
 	
 	public String[] getPactorCommands() {
 		return (String[]) pactor.getActions().toArray(new String[]{});
+	}
+	
+	public VoidFunctionPointer wrapCommand(final String command) {
+		return new VoidFunctionPointer() {
+			public void call() {
+				pactor.performAction(command);
+			}
+		};
 	}
 	
 }

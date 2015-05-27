@@ -18,7 +18,6 @@ final public class PacDaddyGame extends Application implements PacDaddyApplicati
 		pacDaddyElements.insert("ATTRIBUTES",        new GameAttributes());
 		pacDaddyElements.insert("INPUT_PROCESSOR",   new FunctionDispatchCommandProcessor());
 		pacDaddyElements.insert("MAINLOOP",          new PacDaddyMainLoop());
-		pacDaddyElements.insert("PACTOR_CONTROLLER", new PactorController());
 		
 		PacDaddyWorld world = (PacDaddyWorld) getWritable("WORLD");
 		PacDaddyMainLoop mainLoop = (PacDaddyMainLoop) getWritable("MAINLOOP");
