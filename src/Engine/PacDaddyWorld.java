@@ -164,6 +164,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		g.setAttribute("POSITION", new TileCoordinate());
 		g.setAttribute("TICK_COUNTER", 0);
 		g.setAttribute("TICKS_TO_MOVE", 0);
+		g.setAttribute("FRACTIONAL_TICK_ACCUMULATOR", 0f);
 		g.setAttribute("CAN_TRAVERSE", new HashSet<String>());
 		worldPactorAttributes.insert(name, g);
 	}
@@ -287,7 +288,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private boolean isTimeToUpdatePactor(String name) {
 		GameAttributes g = worldPactorAttributes.get(name);
-		return (int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE");
+		return ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE"));
 	}
 	
 	private void resetPactorTicker(String name) {
@@ -302,7 +303,14 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		if (speed__pct == 0) {
 			g.setAttribute("TICKS_TO_MOVE", 0);
 		} else {
-			g.setAttribute("TICKS_TO_MOVE", (int)(tickingSpeed * speed__pct));
+			float smoothTicks = (((float)tickingSpeed / speed__pct) / tickingSpeed);
+			int roughTicksLowerBound = (int)Math.floor(smoothTicks);
+			float roundOffTicks = smoothTicks - roughTicksLowerBound;
+			g.setAttribute("FRACTIONAL_TICK_ACCUMULATOR", (float)g.getValueOf("FRACTIONAL_TICK_ACCUMULATOR") + roundOffTicks);
+			int carryTicks = (int)Math.floor((float)g.getValueOf("FRACTIONAL_TICK_ACCUMULATOR"));
+			g.setAttribute("FRACTIONAL_TICK_ACCUMULATOR", (float)g.getValueOf("FRACTIONAL_TICK_ACCUMULATOR") - carryTicks);
+			roughTicksLowerBound += carryTicks;
+			g.setAttribute("TICKS_TO_MOVE", roughTicksLowerBound);
 		}
 	}
 	
