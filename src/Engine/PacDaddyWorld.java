@@ -128,6 +128,16 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		return info;
 	}
 	
+	public int getNumberOfPactorsWithAttribute(String attribute) {
+		int count = 0;
+		for (String pactor : pactors.getNames()) {
+			if (doesPactorHaveAttribute(pactor, attribute)) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
 	public boolean canPactorMoveInDirection(String pactorName, String direction) {
 		TileCoordinate pactorPosition = getPositionFor(pactorName);
 		TileCoordinate adjacentTile = getAdjacentTileCoordinateInDirection(pactorPosition, direction);
