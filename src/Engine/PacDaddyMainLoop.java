@@ -5,20 +5,25 @@ import functionpointers.VoidFunctionPointer;
 
 final public class PacDaddyMainLoop extends TickingLoop {
 	
-	private PacDaddyWorld worldRef;
-	
-	PacDaddyMainLoop() {
-		worldRef = new PacDaddyWorld();
-		
-		addFunction(new VoidFunctionPointer() {
-			public void call() {
-				worldRef.tick();
-			}
-		});
-	}
-	
 	public void setWorld(PacDaddyWorld WORLDREF) {
 		worldRef = WORLDREF;
 	}
+	
+	PacDaddyMainLoop() {
+		worldRef = new PacDaddyWorld();
+		addFunction(mainTick);
+	}
+	
+	private PacDaddyWorld worldRef;
+	
+	private VoidFunctionPointer mainTick = new VoidFunctionPointer() {
+		public void call() {
+			try {
+				worldRef.tick();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	};
 	
 }
