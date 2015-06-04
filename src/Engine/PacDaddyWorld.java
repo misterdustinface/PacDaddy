@@ -1,21 +1,25 @@
 package Engine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
-import datastructures.Table;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
+import datastructures.Table;
 
 final public class PacDaddyWorld implements PacDaddyBoardReader {
 
 	private TileWorld tileWorld;
 	private PactorCloud pactorCloud;
 	volatile private Table<GameAttributes> hiddenPactorAttributes;
+	volatile private HashMap<Integer, HashSet<String>> pactorLocations;
 	
 	public PacDaddyWorld() {
 		tileWorld = new TileWorld();
 		pactorCloud = new PactorCloud();
 		hiddenPactorAttributes = new Table<GameAttributes>();
+		pactorLocations = new HashMap<Integer, HashSet<String>>();
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -47,11 +51,13 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		hiddenPactorAttributes.insert(name, new GameAttributes());
 		setupHiddenWorldPactorAttributes(name);
 		forceProperPactorAttributes(name);
+		setPactorLocation(name);
 	}
 	
 	public void removePactor(String name) {
 		pactorCloud.removePactor(name);
 		hiddenPactorAttributes.remove(name);
+		removePactorLocation(name);
 	}
 	
 	public Pactor getPactor(String name) {
@@ -73,10 +79,12 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public void respawnPactor(String name) {
+		removePactorLocation(name);
 		TileCoordinate c = getPositionFor(name);
 		TileCoordinate spawn = getSpawnFor(name);
 		c.row = spawn.row;
 		c.col = spawn.col;
+		setPactorLocation(name);
 	}
 	
 	public void respawnAllPactors() {
@@ -186,8 +194,34 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private void updatePactor(String pactorName) {
 		String requestedDirection = getRequestedPactorDirection(pactorName);
+		removePactorLocation(pactorName);
 		attemptToMovePactorInDirection(pactorName, requestedDirection);
+		setPactorLocation(pactorName);
 		notifyPactorCollisions(pactorName);
+	}
+	
+	private void removePactorLocation(String pactorName) {
+		TileCoordinate tc = getPositionFor(pactorName);
+		int hashcode = tc.hashCode();
+		if (!pactorLocations.containsKey(hashcode)) {
+			pactorLocations.put(hashcode, new HashSet<String>());
+		}
+		pactorLocations.get(hashcode).remove(pactorName);
+	}
+	
+	private void setPactorLocation(String pactorName) {
+		TileCoordinate tc = getPositionFor(pactorName);
+		int hashcode = tc.hashCode();
+		if (!pactorLocations.containsKey(hashcode)) {
+			pactorLocations.put(hashcode, new HashSet<String>());
+		}
+		pactorLocations.get(hashcode).add(pactorName);
+	}
+	
+	private Set<String> getPotentialCollisionsForPactor(String pactorName) {
+		TileCoordinate tc = getPositionFor(pactorName);
+		int hashcode = tc.hashCode();
+		return pactorLocations.get(hashcode);
 	}
 	
 	private void attemptToMovePactorInDirection(String pactorName, String direction) {
@@ -242,7 +276,8 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	private void notifyPactorCollisions(String pactorName) {
-		for (String otherName : pactorCloud) {
+		// getPotentialCollisionsForPactor(pactorName) is better than pactorCloud here
+		for (String otherName : getPotentialCollisionsForPactor(pactorName)) {
 			if (havePactorsCollided(pactorName, otherName)) {
 				notifyCollisionBetweenPactors(pactorName, otherName);
 			}
@@ -263,11 +298,19 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	private TileCoordinate getSpawnFor(String name) {
-		return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("SPAWN");
+		if (hiddenPactorAttributes.contains(name)) {
+			return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("SPAWN");
+		} else {
+			return new TileCoordinate();
+		}
 	}
 	
 	private TileCoordinate getPositionFor(String name) {
-		return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("POSITION");
+		if (hiddenPactorAttributes.contains(name)) {
+			return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("POSITION");
+		} else {
+			return new TileCoordinate();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
