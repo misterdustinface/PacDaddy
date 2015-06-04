@@ -13,13 +13,13 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	private TileWorld tileWorld;
 	private PactorCloud pactorCloud;
 	volatile private Table<GameAttributes> hiddenPactorAttributes;
-	volatile private HashMap<Integer, HashSet<String>> pactorLocations;
+	volatile private HashMap<Integer, HashSet<String>> sharedPactorLocations;
 	
 	public PacDaddyWorld() {
 		tileWorld = new TileWorld();
 		pactorCloud = new PactorCloud();
 		hiddenPactorAttributes = new Table<GameAttributes>();
-		pactorLocations = new HashMap<Integer, HashSet<String>>();
+		sharedPactorLocations = new HashMap<Integer, HashSet<String>>();
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -203,25 +203,25 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	private void removePactorLocation(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
 		int id = tc.hashCode();
-		if (!pactorLocations.containsKey(id)) {
-			pactorLocations.put(id, new HashSet<String>());
+		if (!sharedPactorLocations.containsKey(id)) {
+			sharedPactorLocations.put(id, new HashSet<String>());
 		}
-		pactorLocations.get(id).remove(pactorName);
+		sharedPactorLocations.get(id).remove(pactorName);
 	}
 	
 	private void setPactorLocation(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
 		int id = tc.hashCode();
-		if (!pactorLocations.containsKey(id)) {
-			pactorLocations.put(id, new HashSet<String>());
+		if (!sharedPactorLocations.containsKey(id)) {
+			sharedPactorLocations.put(id, new HashSet<String>());
 		}
-		pactorLocations.get(id).add(pactorName);
+		sharedPactorLocations.get(id).add(pactorName);
 	}
 	
 	private Set<String> getPotentialCollisionsForPactor(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
 		int id = tc.hashCode();
-		return pactorLocations.get(id);
+		return sharedPactorLocations.get(id);
 	}
 	
 	private void attemptToMovePactorInDirection(String pactorName, String direction) {
