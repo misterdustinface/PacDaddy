@@ -202,26 +202,26 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private void removePactorLocation(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
-		int hashcode = tc.hashCode();
-		if (!pactorLocations.containsKey(hashcode)) {
-			pactorLocations.put(hashcode, new HashSet<String>());
+		int id = tc.hashCode();
+		if (!pactorLocations.containsKey(id)) {
+			pactorLocations.put(id, new HashSet<String>());
 		}
-		pactorLocations.get(hashcode).remove(pactorName);
+		pactorLocations.get(id).remove(pactorName);
 	}
 	
 	private void setPactorLocation(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
-		int hashcode = tc.hashCode();
-		if (!pactorLocations.containsKey(hashcode)) {
-			pactorLocations.put(hashcode, new HashSet<String>());
+		int id = tc.hashCode();
+		if (!pactorLocations.containsKey(id)) {
+			pactorLocations.put(id, new HashSet<String>());
 		}
-		pactorLocations.get(hashcode).add(pactorName);
+		pactorLocations.get(id).add(pactorName);
 	}
 	
 	private Set<String> getPotentialCollisionsForPactor(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
-		int hashcode = tc.hashCode();
-		return pactorLocations.get(hashcode);
+		int id = tc.hashCode();
+		return pactorLocations.get(id);
 	}
 	
 	private void attemptToMovePactorInDirection(String pactorName, String direction) {
@@ -276,14 +276,13 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	private void notifyPactorCollisions(String pactorName) {
-		// getPotentialCollisionsForPactor(pactorName) is better than pactorCloud here
 		for (String otherName : getPotentialCollisionsForPactor(pactorName)) {
 			if (havePactorsCollided(pactorName, otherName)) {
 				notifyCollisionBetweenPactors(pactorName, otherName);
 			}
 		}
 	}
-	
+
 	private boolean havePactorsCollided(String A, String B) {
 		TileCoordinate APos = getPositionFor(A);
 		TileCoordinate BPos = getPositionFor(B);
