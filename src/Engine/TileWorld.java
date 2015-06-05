@@ -57,6 +57,12 @@ class TileWorld {
 		}
 	}
 	
+	void swap(TileCoordinate A, TileCoordinate B) {
+		int TEMP = tileWorld[A.row][A.col];
+		tileWorld[A.row][A.col] = tileWorld[B.row][B.col];
+		tileWorld[B.row][B.col] = TEMP;
+	}
+	
 	private boolean doesTileTypeAlreadyExist(String name) {
 		for (String s : tilenamesarray) {
 			if (s == name) {

@@ -155,6 +155,18 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		return pactorCloud.getPactorNames();
 	}
 	
+	public void swap(int rowA, int colA, int rowB, int colB) {
+		TileCoordinate A = new TileCoordinate();
+		A.row = rowA;
+		A.col = colA;
+		TileCoordinate B = new TileCoordinate();
+		B.row = rowB;
+		B.col = colB;
+		
+		tileWorld.swap(A, B);
+		swapPactorSets(A, B);
+	}
+	
 	void tick() {
 		for (String name : pactorCloud) {
 			tickPactor(name);
@@ -348,6 +360,15 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 			roughTicksLowerBound += carryTicks;
 			g.setAttribute("TICKS_TO_MOVE", roughTicksLowerBound);
 		}
+	}
+	
+	private void swapPactorSets(TileCoordinate A, TileCoordinate B) {
+		int AID = A.hashCode();
+		int BID = B.hashCode();
+		HashSet<String> SetA = sharedPactorLocations.get(AID);
+		HashSet<String> SetB = sharedPactorLocations.get(BID);
+		sharedPactorLocations.put(AID, SetB);
+		sharedPactorLocations.put(BID, SetA);
 	}
 	
 }
