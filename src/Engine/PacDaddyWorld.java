@@ -251,10 +251,10 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		HashSet<String> SetA = getPactorBucket(A);
 		HashSet<String> SetB = getPactorBucket(B);
 		for (String name : SetA) {
-			hiddenPactorAttributes.get(name).setAttribute("POSITION", B);
+			setPactorPosition(name, B);
 		}
 		for (String name : SetB) {
-			hiddenPactorAttributes.get(name).setAttribute("POSITION", A);
+			setPactorPosition(name, A);
 		}
 		setPactorBucket(A, SetB);
 		setPactorBucket(B, SetA);
