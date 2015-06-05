@@ -164,7 +164,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		B.col = colB;
 		
 		tileWorld.swap(A, B);
-		swapPactorSets(A, B);
+		swapPactorBuckets(A, B);
 	}
 	
 	void tick() {
@@ -232,8 +232,34 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private Set<String> getPotentialCollisionsForPactor(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
+		return getPactorBucket(tc);
+	}
+	
+	private HashSet<String> getPactorBucket(TileCoordinate tc) {
 		int id = tc.hashCode();
-		return sharedPactorLocations.get(id);
+		HashSet<String> bucket = sharedPactorLocations.get(id);
+		if (bucket == null) {
+			bucket = new HashSet<String>();
+		}
+		return bucket;
+	}
+	
+	private void setPactorBucket(TileCoordinate tc, HashSet<String> bucket) {
+		int id = tc.hashCode();
+		sharedPactorLocations.put(id, bucket);
+	}
+	
+	private void swapPactorBuckets(TileCoordinate A, TileCoordinate B) {
+		HashSet<String> SetA = getPactorBucket(A);
+		HashSet<String> SetB = getPactorBucket(B);
+		for (String name : SetA) {
+			hiddenPactorAttributes.get(name).setAttribute("POSITION", B);
+		}
+		for (String name : SetB) {
+			hiddenPactorAttributes.get(name).setAttribute("POSITION", A);
+		}
+		setPactorBucket(A, SetB);
+		setPactorBucket(B, SetA);
 	}
 	
 	private void attemptToMovePactorInDirection(String pactorName, String direction) {
@@ -336,7 +362,8 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private boolean isTimeToUpdatePactor(String name) {
 		GameAttributes g = hiddenPactorAttributes.get(name);
-		return ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE"));
+		return ((int)g.getValueOf("TICK_COUNTER") >= (int)g.getValueOf("TICKS_TO_MOVE"))
+			&& (int)g.getValueOf("TICKS_TO_MOVE") > 0;
 	}
 	
 	private void resetPactorTicker(String name) {
@@ -360,15 +387,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 			roughTicksLowerBound += carryTicks;
 			g.setAttribute("TICKS_TO_MOVE", roughTicksLowerBound);
 		}
-	}
-	
-	private void swapPactorSets(TileCoordinate A, TileCoordinate B) {
-		int AID = A.hashCode();
-		int BID = B.hashCode();
-		HashSet<String> SetA = sharedPactorLocations.get(AID);
-		HashSet<String> SetB = sharedPactorLocations.get(BID);
-		sharedPactorLocations.put(AID, SetB);
-		sharedPactorLocations.put(BID, SetA);
 	}
 	
 }
