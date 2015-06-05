@@ -8,42 +8,16 @@ import java.util.Set;
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import datastructures.Table;
 
-final public class PacDaddyWorld implements PacDaddyBoardReader {
+final public class PacDaddyWorld extends TileWorld implements PacDaddyBoardReader {
 
-	private TileWorld tileWorld;
 	private PactorCloud pactorCloud;
 	volatile private Table<GameAttributes> hiddenPactorAttributes;
 	volatile private HashMap<Integer, HashSet<String>> sharedPactorLocationBuckets;
 	
 	public PacDaddyWorld() {
-		tileWorld = new TileWorld();
 		pactorCloud = new PactorCloud();
 		hiddenPactorAttributes = new Table<GameAttributes>();
 		sharedPactorLocationBuckets = new HashMap<Integer, HashSet<String>>();
-	}
-	
-	public void loadFromString(String worldstring) {
-		tileWorld.loadFromString(worldstring);
-	}
-	
-	public void addTileType(String name) {
-		tileWorld.addTileType(name);
-	}
-	
-	public int[][] getTiledBoard() {
-		return tileWorld.getTiledBoard();
-	}
-	
-	public String[] getTileNames() {
-		return tileWorld.getTileNames();
-	}
-	
-	public int getRows() {
-		return tileWorld.getRows();
-	}
-	
-	public int getCols() {
-		return tileWorld.getCols();
 	}
 	
 	public void addPactor(String name, Pactor p) {
@@ -98,8 +72,8 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public boolean isTraversableForPactor(int row, int col, String pactorname) {
-		int tilenum = tileWorld.getTile(row, col);
-		String tilename = tileWorld.getTileNames()[tilenum];
+		int tilenum = getTile(row, col);
+		String tilename = getTileNames()[tilenum];
 		return getTraversableTilesFor(pactorname).contains(tilename);
 	}
 	
@@ -162,7 +136,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		B.row = rowB;
 		B.col = colB;
 		
-		tileWorld.swap(A, B);
+		super.swap(A, B);
 		swapPactorCollisionBuckets(A, B);
 	}
 	
@@ -289,7 +263,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		TileCoordinate adjacentTile = new TileCoordinate();
 		adjacentTile.row = direction == "UP"   ? (current.row - 1) : direction == "DOWN"  ? (current.row + 1) : current.row;
 		adjacentTile.col = direction == "LEFT" ? (current.col - 1) : direction == "RIGHT" ? (current.col + 1) : current.col;
-		tileWorld.wrapTileCoordinateToWorldBounds(adjacentTile);
+		wrapTileCoordinateToWorldBounds(adjacentTile);
 		return adjacentTile;
 	}
 	
