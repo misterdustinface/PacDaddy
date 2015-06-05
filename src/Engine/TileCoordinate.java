@@ -11,4 +11,12 @@ final public class TileCoordinate implements Structure {
 		//a >= b ? a * a + a + b : a + b * b;  where a, b >= 0
 		return row >= col ? (row * row + row + col) : (row + col * col);
 	}
+	
+	public boolean equals(Object other) {
+		if (other instanceof TileCoordinate) {
+			TileCoordinate tc = (TileCoordinate) other;
+			return tc.row == row && tc.col == col;
+		}
+		return false;
+	}
 }

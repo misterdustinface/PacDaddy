@@ -1,9 +1,9 @@
 package Engine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import PacDaddyApplicationInterfaces.PacDaddyBoardReader;
 import datastructures.Table;
@@ -12,12 +12,12 @@ final public class PacDaddyWorld extends TileWorld implements PacDaddyBoardReade
 
 	private PactorCloud pactorCloud;
 	volatile private Table<GameAttributes> hiddenPactorAttributes;
-	volatile private HashMap<Integer, HashSet<String>> sharedPactorLocationBuckets;
+	volatile private ConcurrentHashMap<TileCoordinate, ConcurrentSkipListSet<String>> sharedPactorLocationBuckets;
 	
 	public PacDaddyWorld() {
 		pactorCloud = new PactorCloud();
 		hiddenPactorAttributes = new Table<GameAttributes>();
-		sharedPactorLocationBuckets = new HashMap<Integer, HashSet<String>>();
+		sharedPactorLocationBuckets = new ConcurrentHashMap<TileCoordinate, ConcurrentSkipListSet<String>>();
 	}
 	
 	public void addPactor(String name, Pactor p) {
@@ -185,48 +185,43 @@ final public class PacDaddyWorld extends TileWorld implements PacDaddyBoardReade
 	}
 	
 	private void createCollisionBucketForTileCoordinateIfBucketAbsent(TileCoordinate tc) {
-		int id = tc.hashCode();
-		if (!sharedPactorLocationBuckets.containsKey(id)) {
-			sharedPactorLocationBuckets.put(id, new HashSet<String>());
+		if (!sharedPactorLocationBuckets.containsKey(tc)) {
+			sharedPactorLocationBuckets.put(tc, new ConcurrentSkipListSet<String>());
 		}
 	}
 	
 	private void removePactorFromCollisionBucket(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
 		createCollisionBucketForTileCoordinateIfBucketAbsent(tc);
-		int id = tc.hashCode();
-		sharedPactorLocationBuckets.get(id).remove(pactorName);
+		sharedPactorLocationBuckets.get(tc).remove(pactorName);
 	}
 	
 	private void setPactorInCollisionBucket(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
 		createCollisionBucketForTileCoordinateIfBucketAbsent(tc);
-		int id = tc.hashCode();
-		sharedPactorLocationBuckets.get(id).add(pactorName);
+		sharedPactorLocationBuckets.get(tc).add(pactorName);
 	}
 	
-	private Set<String> getPotentialCollisionsForPactor(String pactorName) {
+	private ConcurrentSkipListSet<String> getPotentialCollisionsForPactor(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
 		return getPactorCollisionBucket(tc);
 	}
 	
-	private HashSet<String> getPactorCollisionBucket(TileCoordinate tc) {
-		int id = tc.hashCode();
-		HashSet<String> bucket = sharedPactorLocationBuckets.get(id);
+	private ConcurrentSkipListSet<String> getPactorCollisionBucket(TileCoordinate tc) {
+		ConcurrentSkipListSet<String> bucket = sharedPactorLocationBuckets.get(tc);
 		if (bucket == null) {
-			bucket = new HashSet<String>();
+			bucket = new ConcurrentSkipListSet<String>();
 		}
 		return bucket;
 	}
 	
-	private void setPactorCollisionBucket(TileCoordinate tc, HashSet<String> bucket) {
-		int id = tc.hashCode();
-		sharedPactorLocationBuckets.put(id, bucket);
+	private void setPactorCollisionBucket(TileCoordinate tc, ConcurrentSkipListSet<String> bucket) {
+		sharedPactorLocationBuckets.put(tc, bucket);
 	}
 	
 	private void swapPactorCollisionBuckets(TileCoordinate A, TileCoordinate B) {
-		HashSet<String> SetA = getPactorCollisionBucket(A);
-		HashSet<String> SetB = getPactorCollisionBucket(B);
+		ConcurrentSkipListSet<String> SetA = getPactorCollisionBucket(A);
+		ConcurrentSkipListSet<String> SetB = getPactorCollisionBucket(B);
 		for (String name : SetA) {
 			setPactorPosition(name, B);
 		}

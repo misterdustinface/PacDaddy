@@ -43,7 +43,7 @@ class TileWorld {
 		return tileWorld[0].length;
 	}
 	
-	public void wrapTileCoordinateToWorldBounds(TileCoordinate c) {
+	void wrapTileCoordinateToWorldBounds(TileCoordinate c) {
 		if (c.row >= getRows()) {
 			c.row = 0;
 		} else if (c.row < 0) {
