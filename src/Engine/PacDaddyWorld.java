@@ -13,13 +13,13 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	private TileWorld tileWorld;
 	private PactorCloud pactorCloud;
 	volatile private Table<GameAttributes> hiddenPactorAttributes;
-	volatile private HashMap<Integer, HashSet<String>> sharedPactorLocations;
+	volatile private HashMap<Integer, HashSet<String>> sharedPactorLocationBuckets;
 	
 	public PacDaddyWorld() {
 		tileWorld = new TileWorld();
 		pactorCloud = new PactorCloud();
 		hiddenPactorAttributes = new Table<GameAttributes>();
-		sharedPactorLocations = new HashMap<Integer, HashSet<String>>();
+		sharedPactorLocationBuckets = new HashMap<Integer, HashSet<String>>();
 	}
 	
 	public void loadFromString(String worldstring) {
@@ -51,13 +51,13 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		hiddenPactorAttributes.insert(name, new GameAttributes());
 		setupHiddenWorldPactorAttributes(name);
 		forceProperPactorAttributes(name);
-		setPactorLocation(name);
+		setPactorInCollisionBucket(name);
 	}
 	
 	public void removePactor(String name) {
+		removePactorFromCollisionBucket(name);
 		pactorCloud.removePactor(name);
 		hiddenPactorAttributes.remove(name);
-		removePactorLocation(name);
 	}
 	
 	public Pactor getPactor(String name) {
@@ -79,12 +79,12 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	}
 	
 	public void respawnPactor(String name) {
-		removePactorLocation(name);
+		removePactorFromCollisionBucket(name);
 		TileCoordinate c = getPositionFor(name);
 		TileCoordinate spawn = getSpawnFor(name);
 		c.row = spawn.row;
 		c.col = spawn.col;
-		setPactorLocation(name);
+		setPactorInCollisionBucket(name);
 	}
 	
 	public void respawnAllPactors() {
@@ -163,7 +163,7 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		B.col = colB;
 		
 		tileWorld.swap(A, B);
-		swapPactorBuckets(A, B);
+		swapPactorCollisionBuckets(A, B);
 	}
 	
 	void tick() {
@@ -204,60 +204,63 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 	
 	private void updatePactor(String pactorName) {
 		String requestedDirection = getRequestedPactorDirection(pactorName);
-		removePactorLocation(pactorName);
+		removePactorFromCollisionBucket(pactorName);
 		attemptToMovePactorInDirection(pactorName, requestedDirection);
-		setPactorLocation(pactorName);
+		setPactorInCollisionBucket(pactorName);
 		notifyPactorCollisions(pactorName);
 	}
 	
-	private void removePactorLocation(String pactorName) {
-		TileCoordinate tc = getPositionFor(pactorName);
+	private void createCollisionBucketForTileCoordinateIfBucketAbsent(TileCoordinate tc) {
 		int id = tc.hashCode();
-		if (!sharedPactorLocations.containsKey(id)) {
-			sharedPactorLocations.put(id, new HashSet<String>());
+		if (!sharedPactorLocationBuckets.containsKey(id)) {
+			sharedPactorLocationBuckets.put(id, new HashSet<String>());
 		}
-		sharedPactorLocations.get(id).remove(pactorName);
 	}
 	
-	private void setPactorLocation(String pactorName) {
+	private void removePactorFromCollisionBucket(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
+		createCollisionBucketForTileCoordinateIfBucketAbsent(tc);
 		int id = tc.hashCode();
-		if (!sharedPactorLocations.containsKey(id)) {
-			sharedPactorLocations.put(id, new HashSet<String>());
-		}
-		sharedPactorLocations.get(id).add(pactorName);
+		sharedPactorLocationBuckets.get(id).remove(pactorName);
+	}
+	
+	private void setPactorInCollisionBucket(String pactorName) {
+		TileCoordinate tc = getPositionFor(pactorName);
+		createCollisionBucketForTileCoordinateIfBucketAbsent(tc);
+		int id = tc.hashCode();
+		sharedPactorLocationBuckets.get(id).add(pactorName);
 	}
 	
 	private Set<String> getPotentialCollisionsForPactor(String pactorName) {
 		TileCoordinate tc = getPositionFor(pactorName);
-		return getPactorBucket(tc);
+		return getPactorCollisionBucket(tc);
 	}
 	
-	private HashSet<String> getPactorBucket(TileCoordinate tc) {
+	private HashSet<String> getPactorCollisionBucket(TileCoordinate tc) {
 		int id = tc.hashCode();
-		HashSet<String> bucket = sharedPactorLocations.get(id);
+		HashSet<String> bucket = sharedPactorLocationBuckets.get(id);
 		if (bucket == null) {
 			bucket = new HashSet<String>();
 		}
 		return bucket;
 	}
 	
-	private void setPactorBucket(TileCoordinate tc, HashSet<String> bucket) {
+	private void setPactorCollisionBucket(TileCoordinate tc, HashSet<String> bucket) {
 		int id = tc.hashCode();
-		sharedPactorLocations.put(id, bucket);
+		sharedPactorLocationBuckets.put(id, bucket);
 	}
 	
-	private void swapPactorBuckets(TileCoordinate A, TileCoordinate B) {
-		HashSet<String> SetA = getPactorBucket(A);
-		HashSet<String> SetB = getPactorBucket(B);
+	private void swapPactorCollisionBuckets(TileCoordinate A, TileCoordinate B) {
+		HashSet<String> SetA = getPactorCollisionBucket(A);
+		HashSet<String> SetB = getPactorCollisionBucket(B);
 		for (String name : SetA) {
 			setPactorPosition(name, B);
 		}
 		for (String name : SetB) {
 			setPactorPosition(name, A);
 		}
-		setPactorBucket(A, SetB);
-		setPactorBucket(B, SetA);
+		setPactorCollisionBucket(A, SetB);
+		setPactorCollisionBucket(B, SetA);
 	}
 	
 	private void attemptToMovePactorInDirection(String pactorName, String direction) {
@@ -332,6 +335,10 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 		pactorB.notifyCollidedWith(pactorA);
 	}
 	
+	private float getPactorSpeed(String name) {
+		return ((Number) getPactor(name).getValueOf("SPEED__PCT")).floatValue();
+	}
+	
 	private TileCoordinate getSpawnFor(String name) {
 		if (hiddenPactorAttributes.contains(name)) {
 			return (TileCoordinate) hiddenPactorAttributes.get(name).getValueOf("SPAWN");
@@ -385,10 +392,6 @@ final public class PacDaddyWorld implements PacDaddyBoardReader {
 			roughTicksLowerBound += carryTicks;
 			g.setAttribute("TICKS_TO_MOVE", roughTicksLowerBound);
 		}
-	}
-	
-	private float getPactorSpeed(String name) {
-		return ((Number) getPactor(name).getValueOf("SPEED__PCT")).floatValue();
 	}
 	
 }
